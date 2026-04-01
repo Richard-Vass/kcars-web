@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Locale } from "@/lib/i18n";
 
 interface FooterProps {
@@ -11,79 +12,66 @@ interface FooterProps {
 
 export default function Footer({ locale, t }: FooterProps) {
   return (
-    <footer className="bg-zinc-950 border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-[#060a12] border-t border-white/5">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
-            <span className="text-2xl font-bold text-white">
-              K <span className="text-red-500">cars</span>
-            </span>
-            <p className="mt-3 text-sm text-white/50">www.kcars.sk</p>
+            <Image
+              src="/images/logo.png"
+              alt="KCars"
+              width={120}
+              height={39}
+              className="invert mb-3"
+            />
+            <p className="text-sm text-[#6b7a94]">www.kcars.sk</p>
           </div>
 
           {/* Navigation */}
           <div>
-            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4">
+            <h3 className="text-xs font-semibold text-[#6b7a94] uppercase tracking-[2px] mb-5">
               Menu
             </h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href={`/${locale}`}
-                  className="text-sm text-white/50 hover:text-white transition-colors"
-                >
-                  {t.nav.home}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/ponuka`}
-                  className="text-sm text-white/50 hover:text-white transition-colors"
-                >
-                  {t.nav.cars}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/o-nas`}
-                  className="text-sm text-white/50 hover:text-white transition-colors"
-                >
-                  {t.nav.about}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={`/${locale}/kontakt`}
-                  className="text-sm text-white/50 hover:text-white transition-colors"
-                >
-                  {t.nav.contact}
-                </Link>
-              </li>
+            <ul className="space-y-3">
+              {[
+                { href: `/${locale}`, label: t.nav.home },
+                { href: `/${locale}/ponuka`, label: t.nav.cars },
+                { href: `/${locale}/o-nas`, label: t.nav.about },
+                { href: `/${locale}/kontakt`, label: t.nav.contact },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-[#6b7a94] hover:text-[#f0f2f5] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact info */}
+          {/* Contact */}
           <div>
-            <h3 className="text-sm font-semibold text-white/70 uppercase tracking-wider mb-4">
+            <h3 className="text-xs font-semibold text-[#6b7a94] uppercase tracking-[2px] mb-5">
               {t.nav.contact}
             </h3>
-            <ul className="space-y-2 text-sm text-white/50">
+            <ul className="space-y-2 text-sm text-[#6b7a94]">
               <li>info@kcars.sk</li>
               <li>+421 XXX XXX XXX</li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-white/30">
+        <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-[#6b7a94]/50">
             &copy; {new Date().getFullYear()} KCars. {t.footer.rights}.
           </p>
-          <div className="flex gap-4">
-            <span className="text-xs text-white/30 hover:text-white/50 cursor-pointer transition-colors">
+          <div className="flex gap-6">
+            <span className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] cursor-pointer transition-colors">
               {t.footer.privacy}
             </span>
-            <span className="text-xs text-white/30 hover:text-white/50 cursor-pointer transition-colors">
+            <span className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] cursor-pointer transition-colors">
               {t.footer.terms}
             </span>
           </div>

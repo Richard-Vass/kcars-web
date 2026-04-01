@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Locale } from "@/lib/i18n";
+import { supabase } from "@/lib/supabase";
+import { Car } from "@/types";
 
 interface FeaturedCarsProps {
   locale: Locale;
@@ -10,109 +12,78 @@ interface FeaturedCarsProps {
   };
 }
 
-// Demo data — will be replaced with Supabase query
-const demoCars = [
-  {
-    id: "1",
-    slug: "skoda-octavia-2021",
-    brand: "Škoda",
-    model: "Octavia Combi",
-    year: 2021,
-    price: 18900,
-    mileage: 65000,
-    fuel: "diesel",
-    power_kw: 110,
-    images: [],
-  },
-  {
-    id: "2",
-    slug: "bmw-320d-2020",
-    brand: "BMW",
-    model: "320d xDrive",
-    year: 2020,
-    price: 28500,
-    mileage: 82000,
-    fuel: "diesel",
-    power_kw: 140,
-    images: [],
-  },
-  {
-    id: "3",
-    slug: "vw-golf-8-2022",
-    brand: "Volkswagen",
-    model: "Golf 8",
-    year: 2022,
-    price: 22300,
-    mileage: 35000,
-    fuel: "petrol",
-    power_kw: 110,
-    images: [],
-  },
-];
+export default async function FeaturedCars({ locale, t }: FeaturedCarsProps) {
+  const { data } = await supabase
+    .from("cars")
+    .select("*")
+    .eq("featured", true)
+    .eq("status", "available")
+    .order("created_at", { ascending: false })
+    .limit(3);
 
-export default function FeaturedCars({ locale, t }: FeaturedCarsProps) {
+  const cars = (data || []) as Car[];
+
   return (
-    <section className="py-20 bg-zinc-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-bold text-white">{t.featured.title}</h2>
+    <section className="py-24 bg-[#0c1221]">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-8 h-0.5 bg-gradient-to-r from-[#ef4444] to-[#f97316] rounded-full" />
+              <span className="text-xs font-semibold uppercase tracking-[2px] text-[#f87171]">
+                {locale === "sk" ? "Výber" : locale === "hu" ? "Válogatás" : locale === "de" ? "Auswahl" : "Selection"}
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold text-[#f0f2f5]" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+              {t.featured.title}
+            </h2>
+          </div>
           <Link
             href={`/${locale}/ponuka`}
-            className="text-red-500 hover:text-red-400 font-medium transition-colors"
+            className="text-[#f87171] hover:text-[#ef4444] font-medium transition-colors flex items-center gap-1"
           >
-            {t.featured.viewAll} &rarr;
+            {t.featured.viewAll}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
           </Link>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {demoCars.map((car) => (
+          {cars.map((car) => (
             <Link
               key={car.id}
               href={`/${locale}/ponuka/${car.slug}`}
-              className="group bg-zinc-900 rounded-xl overflow-hidden border border-white/5 hover:border-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/5"
+              className="group bg-[#111a2e] rounded-[20px] overflow-hidden border border-white/5 hover:border-[#ef4444]/20 transition-all hover:shadow-xl hover:shadow-[#ef4444]/5"
             >
               {/* Image placeholder */}
-              <div className="aspect-[16/10] bg-zinc-800 flex items-center justify-center">
-                <svg
-                  className="w-16 h-16 text-zinc-700"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
+              <div className="aspect-[16/10] bg-[#0c1221] flex items-center justify-center relative overflow-hidden">
+                <svg className="w-16 h-16 text-[#1e293b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
+                {/* Fire gradient on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111a2e] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
-              <div className="p-5">
-                <div className="flex items-start justify-between">
+              <div className="p-6">
+                <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs text-white/40 uppercase tracking-wider">
+                    <p className="text-xs text-[#6b7a94] uppercase tracking-wider font-medium">
                       {car.brand}
                     </p>
-                    <h3 className="text-lg font-semibold text-white mt-1 group-hover:text-red-500 transition-colors">
+                    <h3 className="text-lg font-semibold text-[#f0f2f5] mt-1 group-hover:text-[#f87171] transition-colors">
                       {car.brand} {car.model}
                     </h3>
                   </div>
-                  <p className="text-xl font-bold text-red-500">
+                  <p className="text-xl font-bold bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent whitespace-nowrap">
                     {car.price.toLocaleString()} {t.common.eur}
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center gap-4 text-sm text-white/50">
-                  <span>
-                    {t.cars.year}: {car.year}
-                  </span>
-                  <span>
-                    {car.mileage.toLocaleString()} {t.common.km}
-                  </span>
-                  <span>
-                    {car.power_kw} {t.common.kw}
-                  </span>
+                <div className="mt-4 flex items-center gap-4 text-sm text-[#6b7a94]">
+                  <span>{t.cars.year}: {car.year}</span>
+                  <span>{car.mileage.toLocaleString()} {t.common.km}</span>
+                  <span>{car.power_kw} {t.common.kw}</span>
                 </div>
               </div>
             </Link>

@@ -28,10 +28,9 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
   return (
     <Link
       href={`/${locale}/ponuka/${car.slug}`}
-      className="group bg-zinc-900 rounded-xl overflow-hidden border border-white/5 hover:border-red-500/30 transition-all hover:shadow-xl hover:shadow-red-500/5"
+      className="group bg-[#111a2e] rounded-[20px] overflow-hidden border border-white/5 hover:border-[#ef4444]/20 transition-all hover:shadow-xl hover:shadow-[#ef4444]/5"
     >
-      {/* Image */}
-      <div className="aspect-[16/10] bg-zinc-800 relative overflow-hidden">
+      <div className="aspect-[16/10] bg-[#0c1221] relative overflow-hidden">
         {car.images && car.images.length > 0 ? (
           <Image
             src={car.images[0]}
@@ -41,65 +40,46 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
           />
         ) : (
           <div className="flex items-center justify-center h-full">
-            <svg
-              className="w-16 h-16 text-zinc-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
+            <svg className="w-16 h-16 text-[#1e293b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
         )}
 
-        {/* Status badge */}
         {car.status === "reserved" && (
-          <div className="absolute top-3 right-3 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded">
+          <div className="absolute top-3 right-3 bg-[#f97316] text-white text-xs font-bold px-2.5 py-1 rounded-lg">
             {locale === "sk" ? "Rezervované" : locale === "hu" ? "Foglalt" : locale === "de" ? "Reserviert" : "Reserved"}
           </div>
         )}
         {car.status === "sold" && (
-          <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
+          <div className="absolute top-3 right-3 bg-[#ef4444] text-white text-xs font-bold px-2.5 py-1 rounded-lg">
             {locale === "sk" ? "Predané" : locale === "hu" ? "Eladva" : locale === "de" ? "Verkauft" : "Sold"}
           </div>
         )}
       </div>
 
-      <div className="p-5">
+      <div className="p-6">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs text-white/40 uppercase tracking-wider">
-              {car.brand}
-            </p>
-            <h3 className="text-lg font-semibold text-white mt-1 group-hover:text-red-500 transition-colors">
+            <p className="text-xs text-[#6b7a94] uppercase tracking-wider font-medium">{car.brand}</p>
+            <h3 className="text-lg font-semibold text-[#f0f2f5] mt-1 group-hover:text-[#f87171] transition-colors">
               {car.brand} {car.model}
             </h3>
           </div>
-          <p className="text-xl font-bold text-red-500 whitespace-nowrap">
+          <p className="text-xl font-bold bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent whitespace-nowrap">
             {car.price.toLocaleString()} {t.common.eur}
           </p>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-white/50">
-          <span className="flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-            {car.year}
-          </span>
-          <span className="flex items-center gap-1">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            {car.mileage.toLocaleString()} {t.common.km}
-          </span>
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[#6b7a94]">
+          <span>{car.year}</span>
+          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
+          <span>{car.mileage.toLocaleString()} {t.common.km}</span>
+          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
           <span>{car.power_kw} {t.common.kw}</span>
+          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
           <span>{fuelLabels[car.fuel]?.[locale] || car.fuel}</span>
+          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
           <span>{transmissionLabels[car.transmission]?.[locale] || car.transmission}</span>
         </div>
       </div>

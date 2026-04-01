@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import { locales, Locale, getTranslations } from "@/lib/i18n";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -9,6 +9,11 @@ import "../globals.css";
 const inter = Inter({
   subsets: ["latin", "latin-ext"],
   variable: "--font-inter",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
 });
 
 export const metadata: Metadata = {
@@ -40,8 +45,8 @@ export default async function LocaleLayout({
   const t = await getTranslations(locale as Locale);
 
   return (
-    <html lang={locale} className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-black text-white font-sans">
+    <html lang={locale} className={`${inter.variable} ${outfit.variable} h-full antialiased`}>
+      <body className="min-h-full flex flex-col bg-[#060a12] text-[#f0f2f5] font-sans">
         <Navbar locale={locale as Locale} t={t} />
         <main className="flex-1">{children}</main>
         <Footer locale={locale as Locale} t={t} />
