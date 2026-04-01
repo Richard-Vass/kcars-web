@@ -43,11 +43,10 @@ export default function Navbar({ locale, t }: NavbarProps) {
           {/* Logo */}
           <Link href={`/${locale}`} className="flex items-center">
             <Image
-              src="/images/logo.png"
+              src="/images/logo-white.png"
               alt="KCars"
               width={140}
               height={45}
-              className="invert"
               priority
             />
           </Link>

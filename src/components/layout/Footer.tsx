@@ -18,11 +18,11 @@ export default function Footer({ locale, t }: FooterProps) {
           {/* Brand */}
           <div>
             <Image
-              src="/images/logo.png"
+              src="/images/logo-white.png"
               alt="KCars"
               width={120}
               height={39}
-              className="invert mb-3"
+              className="mb-3"
             />
             <p className="text-sm text-[#6b7a94]">www.kcars.sk</p>
           </div>
