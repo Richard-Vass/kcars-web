@@ -45,12 +45,10 @@ export default async function LocaleLayout({
   const t = await getTranslations(locale as Locale);
 
   return (
-    <html lang={locale} className={`${inter.variable} ${outfit.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#060a12] text-[#f0f2f5] font-sans">
-        <Navbar locale={locale as Locale} t={t} />
-        <main className="flex-1">{children}</main>
-        <Footer locale={locale as Locale} t={t} />
-      </body>
-    </html>
+    <div className={`${outfit.variable} min-h-full flex flex-col`}>
+      <Navbar locale={locale as Locale} t={t} />
+      <main className="flex-1">{children}</main>
+      <Footer locale={locale as Locale} t={t} />
+    </div>
   );
 }
