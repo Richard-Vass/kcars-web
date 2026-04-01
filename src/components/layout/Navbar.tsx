@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Locale, locales, localeFlags, localeNames } from "@/lib/i18n";
@@ -40,10 +41,14 @@ export default function Navbar({ locale, t }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href={`/${locale}`} className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-white">
-              K <span className="text-red-500">cars</span>
-            </span>
+          <Link href={`/${locale}`} className="flex items-center">
+            <Image
+              src="/images/logo.svg"
+              alt="KCars"
+              width={140}
+              height={40}
+              priority
+            />
           </Link>
 
           {/* Desktop nav */}
