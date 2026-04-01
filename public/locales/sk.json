@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "home": "Domov",
+    "cars": "Ponuka áut",
+    "about": "O nás",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Váš nový automobil vás už čaká",
+    "subtitle": "Široký výber overených jazdených vozidiel za férové ceny",
+    "cta": "Pozrieť ponuku",
+    "ctaSecondary": "Kontaktujte nás"
+  },
+  "featured": {
+    "title": "Odporúčané vozidlá",
+    "viewAll": "Zobraziť všetky"
+  },
+  "cars": {
+    "title": "Ponuka áut",
+    "filter": "Filtrovať",
+    "brand": "Značka",
+    "priceFrom": "Cena od",
+    "priceTo": "Cena do",
+    "yearFrom": "Rok od",
+    "fuel": "Palivo",
+    "transmission": "Prevodovka",
+    "allBrands": "Všetky značky",
+    "allFuels": "Všetky palivá",
+    "allTransmissions": "Všetky prevodovky",
+    "petrol": "Benzín",
+    "diesel": "Diesel",
+    "electric": "Elektro",
+    "hybrid": "Hybrid",
+    "manual": "Manuál",
+    "automatic": "Automat",
+    "mileage": "Najazdené",
+    "year": "Rok",
+    "power": "Výkon",
+    "reserve": "Rezervovať obhliadku",
+    "noResults": "Žiadne vozidlá nezodpovedajú filtrom"
+  },
+  "reservation": {
+    "title": "Rezervácia obhliadky",
+    "name": "Meno a priezvisko",
+    "email": "E-mail",
+    "phone": "Telefón",
+    "date": "Preferovaný dátum",
+    "message": "Správa (voliteľné)",
+    "submit": "Odoslať rezerváciu",
+    "success": "Rezervácia bola odoslaná! Ozveme sa vám.",
+    "error": "Nastala chyba. Skúste to znova."
+  },
+  "calculator": {
+    "title": "Kalkulačka splátok",
+    "price": "Cena vozidla",
+    "downPayment": "Akontácia",
+    "months": "Počet mesiacov",
+    "monthlyPayment": "Mesačná splátka"
+  },
+  "about": {
+    "title": "O nás",
+    "description": "KCars je rodinný autobazár s dlhoročnou tradíciou. Špecializujeme sa na predaj kvalitných jazdených vozidiel za transparentné ceny."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "name": "Meno",
+    "email": "E-mail",
+    "phone": "Telefón",
+    "message": "Správa",
+    "submit": "Odoslať správu",
+    "address": "Adresa",
+    "hours": "Otváracie hodiny",
+    "success": "Správa bola odoslaná!",
+    "error": "Nastala chyba. Skúste to znova."
+  },
+  "footer": {
+    "rights": "Všetky práva vyhradené",
+    "privacy": "Ochrana súkromia",
+    "terms": "Obchodné podmienky"
+  },
+  "common": {
+    "eur": "€",
+    "km": "km",
+    "kw": "kW"
+  }
+}

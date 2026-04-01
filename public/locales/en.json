@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "home": "Home",
+    "cars": "Cars",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Your new car is waiting for you",
+    "subtitle": "Wide selection of verified used vehicles at fair prices",
+    "cta": "View Cars",
+    "ctaSecondary": "Contact Us"
+  },
+  "featured": {
+    "title": "Featured Vehicles",
+    "viewAll": "View All"
+  },
+  "cars": {
+    "title": "Car Listings",
+    "filter": "Filter",
+    "brand": "Brand",
+    "priceFrom": "Price from",
+    "priceTo": "Price to",
+    "yearFrom": "Year from",
+    "fuel": "Fuel",
+    "transmission": "Transmission",
+    "allBrands": "All brands",
+    "allFuels": "All fuels",
+    "allTransmissions": "All transmissions",
+    "petrol": "Petrol",
+    "diesel": "Diesel",
+    "electric": "Electric",
+    "hybrid": "Hybrid",
+    "manual": "Manual",
+    "automatic": "Automatic",
+    "mileage": "Mileage",
+    "year": "Year",
+    "power": "Power",
+    "reserve": "Book a viewing",
+    "noResults": "No vehicles match your filters"
+  },
+  "reservation": {
+    "title": "Book a Viewing",
+    "name": "Full name",
+    "email": "Email",
+    "phone": "Phone",
+    "date": "Preferred date",
+    "message": "Message (optional)",
+    "submit": "Submit reservation",
+    "success": "Reservation sent! We'll get back to you.",
+    "error": "An error occurred. Please try again."
+  },
+  "calculator": {
+    "title": "Payment Calculator",
+    "price": "Vehicle price",
+    "downPayment": "Down payment",
+    "months": "Number of months",
+    "monthlyPayment": "Monthly payment"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "KCars is a family car dealership with a long tradition. We specialize in selling quality used vehicles at transparent prices."
+  },
+  "contact": {
+    "title": "Contact",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "submit": "Send message",
+    "address": "Address",
+    "hours": "Opening hours",
+    "success": "Message sent!",
+    "error": "An error occurred. Please try again."
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  "common": {
+    "eur": "€",
+    "km": "km",
+    "kw": "kW"
+  }
+}

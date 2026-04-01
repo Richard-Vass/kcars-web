@@ -1,0 +1,177 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Locale, locales, localeFlags, localeNames } from "@/lib/i18n";
+
+interface NavbarProps {
+  locale: Locale;
+  t: {
+    nav: {
+      home: string;
+      cars: string;
+      about: string;
+      contact: string;
+    };
+  };
+}
+
+export default function Navbar({ locale, t }: NavbarProps) {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+
+  const navLinks = [
+    { href: `/${locale}`, label: t.nav.home },
+    { href: `/${locale}/ponuka`, label: t.nav.cars },
+    { href: `/${locale}/o-nas`, label: t.nav.about },
+    { href: `/${locale}/kontakt`, label: t.nav.contact },
+  ];
+
+  function switchLocale(newLocale: Locale) {
+    const segments = pathname.split("/");
+    segments[1] = newLocale;
+    return segments.join("/");
+  }
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link href={`/${locale}`} className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-white">
+              K <span className="text-red-500">cars</span>
+            </span>
+          </Link>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm font-medium transition-colors hover:text-red-500 ${
+                  pathname === link.href ? "text-red-500" : "text-white/80"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Language switcher + CTA */}
+          <div className="hidden md:flex items-center gap-4">
+            <div className="relative">
+              <button
+                onClick={() => setLangOpen(!langOpen)}
+                className="flex items-center gap-1 text-sm text-white/80 hover:text-white transition-colors"
+              >
+                {localeFlags[locale]} {locale.toUpperCase()}
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {langOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-zinc-900 border border-white/10 rounded-lg shadow-xl overflow-hidden">
+                  {locales.map((l) => (
+                    <Link
+                      key={l}
+                      href={switchLocale(l)}
+                      onClick={() => setLangOpen(false)}
+                      className={`flex items-center gap-2 px-4 py-2 text-sm hover:bg-white/10 transition-colors ${
+                        l === locale ? "text-red-500" : "text-white/80"
+                      }`}
+                    >
+                      {localeFlags[l]} {localeNames[l]}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+            <Link
+              href={`/${locale}/kontakt`}
+              className="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              {t.nav.contact}
+            </Link>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-white"
+            onClick={() => setMobileOpen(!mobileOpen)}
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {mobileOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {mobileOpen && (
+        <div className="md:hidden bg-black/95 border-t border-white/10">
+          <div className="px-4 py-4 space-y-3">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                className={`block text-base font-medium transition-colors ${
+                  pathname === link.href ? "text-red-500" : "text-white/80"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex gap-2 pt-3 border-t border-white/10">
+              {locales.map((l) => (
+                <Link
+                  key={l}
+                  href={switchLocale(l)}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-lg ${
+                    l === locale ? "opacity-100" : "opacity-50"
+                  }`}
+                >
+                  {localeFlags[l]}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}

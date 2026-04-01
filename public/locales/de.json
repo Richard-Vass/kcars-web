@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "cars": "Fahrzeugangebot",
+    "about": "Über uns",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Ihr neues Auto wartet auf Sie",
+    "subtitle": "Große Auswahl an geprüften Gebrauchtwagen zu fairen Preisen",
+    "cta": "Angebot ansehen",
+    "ctaSecondary": "Kontaktieren Sie uns"
+  },
+  "featured": {
+    "title": "Empfohlene Fahrzeuge",
+    "viewAll": "Alle anzeigen"
+  },
+  "cars": {
+    "title": "Fahrzeugangebot",
+    "filter": "Filtern",
+    "brand": "Marke",
+    "priceFrom": "Preis ab",
+    "priceTo": "Preis bis",
+    "yearFrom": "Baujahr ab",
+    "fuel": "Kraftstoff",
+    "transmission": "Getriebe",
+    "allBrands": "Alle Marken",
+    "allFuels": "Alle Kraftstoffe",
+    "allTransmissions": "Alle Getriebe",
+    "petrol": "Benzin",
+    "diesel": "Diesel",
+    "electric": "Elektro",
+    "hybrid": "Hybrid",
+    "manual": "Schaltgetriebe",
+    "automatic": "Automatik",
+    "mileage": "Kilometerstand",
+    "year": "Baujahr",
+    "power": "Leistung",
+    "reserve": "Besichtigung reservieren",
+    "noResults": "Keine Fahrzeuge entsprechen den Filtern"
+  },
+  "reservation": {
+    "title": "Besichtigung reservieren",
+    "name": "Vollständiger Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "date": "Gewünschtes Datum",
+    "message": "Nachricht (optional)",
+    "submit": "Reservierung absenden",
+    "success": "Reservierung gesendet! Wir melden uns bei Ihnen.",
+    "error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "calculator": {
+    "title": "Ratenrechner",
+    "price": "Fahrzeugpreis",
+    "downPayment": "Anzahlung",
+    "months": "Laufzeit (Monate)",
+    "monthlyPayment": "Monatliche Rate"
+  },
+  "about": {
+    "title": "Über uns",
+    "description": "KCars ist ein Familienautohaus mit langer Tradition. Wir sind auf den Verkauf hochwertiger Gebrauchtwagen zu transparenten Preisen spezialisiert."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "message": "Nachricht",
+    "submit": "Nachricht senden",
+    "address": "Adresse",
+    "hours": "Öffnungszeiten",
+    "success": "Nachricht gesendet!",
+    "error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
+  },
+  "common": {
+    "eur": "€",
+    "km": "km",
+    "kw": "kW"
+  }
+}

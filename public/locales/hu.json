@@ -1,0 +1,86 @@
+{
+  "nav": {
+    "home": "Kezdőlap",
+    "cars": "Autókínálat",
+    "about": "Rólunk",
+    "contact": "Kapcsolat"
+  },
+  "hero": {
+    "title": "Új autója már várja Önt",
+    "subtitle": "Ellenőrzött használt járművek széles választéka kedvező áron",
+    "cta": "Kínálat megtekintése",
+    "ctaSecondary": "Kapcsolat"
+  },
+  "featured": {
+    "title": "Ajánlott járművek",
+    "viewAll": "Összes megtekintése"
+  },
+  "cars": {
+    "title": "Autókínálat",
+    "filter": "Szűrés",
+    "brand": "Márka",
+    "priceFrom": "Ár -tól",
+    "priceTo": "Ár -ig",
+    "yearFrom": "Évjárat -tól",
+    "fuel": "Üzemanyag",
+    "transmission": "Váltó",
+    "allBrands": "Összes márka",
+    "allFuels": "Összes üzemanyag",
+    "allTransmissions": "Összes váltó",
+    "petrol": "Benzin",
+    "diesel": "Dízel",
+    "electric": "Elektromos",
+    "hybrid": "Hibrid",
+    "manual": "Manuális",
+    "automatic": "Automata",
+    "mileage": "Futásteljesítmény",
+    "year": "Évjárat",
+    "power": "Teljesítmény",
+    "reserve": "Megtekintés foglalása",
+    "noResults": "Nincs a szűrőnek megfelelő jármű"
+  },
+  "reservation": {
+    "title": "Megtekintés foglalása",
+    "name": "Teljes név",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "date": "Kívánt dátum",
+    "message": "Üzenet (opcionális)",
+    "submit": "Foglalás elküldése",
+    "success": "Foglalás elküldve! Hamarosan jelentkezünk.",
+    "error": "Hiba történt. Próbálja újra."
+  },
+  "calculator": {
+    "title": "Részletkalkulátor",
+    "price": "Jármű ára",
+    "downPayment": "Előleg",
+    "months": "Hónapok száma",
+    "monthlyPayment": "Havi részlet"
+  },
+  "about": {
+    "title": "Rólunk",
+    "description": "A KCars egy családi autókereskedés hosszú hagyományokkal. Minőségi használt járművek értékesítésére specializálódtunk átlátható árakon."
+  },
+  "contact": {
+    "title": "Kapcsolat",
+    "name": "Név",
+    "email": "E-mail",
+    "phone": "Telefon",
+    "message": "Üzenet",
+    "submit": "Üzenet küldése",
+    "address": "Cím",
+    "hours": "Nyitvatartás",
+    "success": "Üzenet elküldve!",
+    "error": "Hiba történt. Próbálja újra."
+  },
+  "footer": {
+    "rights": "Minden jog fenntartva",
+    "privacy": "Adatvédelem",
+    "terms": "Általános feltételek"
+  },
+  "common": {
+    "eur": "€",
+    "km": "km",
+    "kw": "kW"
+  }
+}
