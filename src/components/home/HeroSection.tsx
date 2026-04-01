@@ -18,10 +18,43 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-[#060a12]">
-        {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#060a12] via-[#0c1221] to-[#060a12]" />
-        {/* Fire line at bottom */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ef4444] to-transparent opacity-40" />
+      </div>
+
+      {/* Giant logo in background with fire gradient */}
+      <div className="absolute inset-0 flex items-center justify-end overflow-hidden pointer-events-none">
+        {/* Blurred glow layer */}
+        <div
+          className="absolute w-[900px] h-[560px] lg:w-[1100px] lg:h-[680px] right-[-80px] lg:right-[-20px] top-1/2 -translate-y-1/2 blur-[80px]"
+          style={{
+            background: "linear-gradient(135deg, rgba(239,68,68,0.4), rgba(249,115,22,0.3), rgba(239,68,68,0.2))",
+            WebkitMaskImage: "url(/images/logo.png)",
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskImage: "url(/images/logo.png)",
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+          }}
+        />
+        {/* Sharp gradient logo */}
+        <div
+          className="absolute w-[900px] h-[560px] lg:w-[1100px] lg:h-[680px] right-[-80px] lg:right-[-20px] top-1/2 -translate-y-1/2"
+          style={{
+            background: "linear-gradient(135deg, #ef4444 0%, #f97316 40%, #ef4444 70%, #f87171 100%)",
+            opacity: 0.25,
+            WebkitMaskImage: "url(/images/logo.png)",
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskImage: "url(/images/logo.png)",
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+          }}
+        />
       </div>
 
       {/* Particles */}
@@ -42,7 +75,7 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
             </span>
           </div>
 
-          <h1 className="font-[var(--font-outfit)] text-[clamp(3rem,5.5vw,4.8rem)] font-black leading-[1.02] mb-7 tracking-[-2px]" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+          <h1 className="text-[clamp(3rem,5.5vw,4.8rem)] font-black leading-[1.02] mb-7 tracking-[-2px]" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
             {t.hero.title.split(" ").map((word, i) => (
               <span key={i}>
                 {i < 3 ? (
