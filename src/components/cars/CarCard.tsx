@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Car } from "@/types";
 import { Locale } from "@/lib/i18n";
+import { proxyImageUrl } from "@/lib/utils";
 
 interface CarCardProps {
   car: Car;
@@ -32,11 +32,11 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
     >
       <div className="aspect-[16/10] bg-[#0c1221] relative overflow-hidden">
         {car.images && car.images.length > 0 ? (
-          <Image
-            src={car.images[0]}
+          <img
+            src={proxyImageUrl(car.images[0])}
             alt={`${car.brand} ${car.model}`}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
           />
         ) : (
           <div className="flex items-center justify-center h-full">

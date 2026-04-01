@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/img-proxy/:path*",
+        destination: "https://img.autobazar.eu/foto/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

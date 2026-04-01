@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Locale } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
 import { Car } from "@/types";
+import { proxyImageUrl } from "@/lib/utils";
 
 interface FeaturedCarsProps {
   locale: Locale;
@@ -56,13 +57,21 @@ export default async function FeaturedCars({ locale, t }: FeaturedCarsProps) {
               href={`/${locale}/ponuka/${car.slug}`}
               className="group bg-[#111a2e] rounded-[20px] overflow-hidden border border-white/5 hover:border-[#ef4444]/20 transition-all hover:shadow-xl hover:shadow-[#ef4444]/5"
             >
-              {/* Image placeholder */}
-              <div className="aspect-[16/10] bg-[#0c1221] flex items-center justify-center relative overflow-hidden">
-                <svg className="w-16 h-16 text-[#1e293b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                {/* Fire gradient on hover */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111a2e] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="aspect-[16/10] bg-[#0c1221] relative overflow-hidden">
+                {car.images && car.images.length > 0 ? (
+                  <img
+                    src={proxyImageUrl(car.images[0])}
+                    alt={`${car.brand} ${car.model}`}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <svg className="w-16 h-16 text-[#1e293b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                )}
               </div>
 
               <div className="p-6">
