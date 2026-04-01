@@ -23,9 +23,12 @@ export default function Navbar({ locale, t }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
+  const leasingLabel = locale === "sk" ? "Leasing" : locale === "hu" ? "Lízing" : locale === "de" ? "Leasing" : "Leasing";
+
   const navLinks = [
     { href: `/${locale}`, label: t.nav.home },
     { href: `/${locale}/ponuka`, label: t.nav.cars },
+    { href: `/${locale}/leasing`, label: leasingLabel },
     { href: `/${locale}/o-nas`, label: t.nav.about },
     { href: `/${locale}/kontakt`, label: t.nav.contact },
   ];
