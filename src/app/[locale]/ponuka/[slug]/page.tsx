@@ -1,14 +1,32 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Locale, getTranslations } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
 import { Car } from "@/types";
+import { proxyImageUrl } from "@/lib/utils";
 import CarGallery from "@/components/cars/CarGallery";
 import PaymentCalculator from "@/components/cars/PaymentCalculator";
 import ReservationForm from "@/components/forms/ReservationForm";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const { data } = await supabase.from("cars").select("*").eq("slug", slug).single();
+  if (!data) return { title: "Auto nenájdené" };
+  const car = data as Car;
+  return {
+    title: `${car.brand} ${car.model} ${car.year} — ${car.price.toLocaleString()} €`,
+    description: `${car.brand} ${car.model}, rok ${car.year}, ${car.mileage.toLocaleString()} km, ${car.power_kw} kW, ${car.fuel}. Cena: ${car.price.toLocaleString()} €. K cars autobazár Nový Život.`,
+    openGraph: {
+      title: `${car.brand} ${car.model} ${car.year} — ${car.price.toLocaleString()} €`,
+      description: `${car.brand} ${car.model}, ${car.mileage.toLocaleString()} km, ${car.power_kw} kW`,
+      images: car.images?.[0] ? [{ url: car.images[0] }] : [],
+    },
+  };
 }
 
 export default async function CarDetailPage({ params }: Props) {

@@ -177,9 +177,16 @@ function parseListingPage(html: string): ScrapedCar[] {
         ? parseFloat(priceMatch[1].replace(/\s/g, "").replace(",", "."))
         : 0;
 
-      // Extract image
+      // Extract image — prefer thumbs URL (works without hotlink protection)
+      const thumbsMatch = block.match(/(?:src|data-src)="(https:\/\/www\.autobazar\.eu\/thumbs\/[^"]+)"/i);
       const imgMatch = block.match(/(?:src|data-src)="(https:\/\/img\.autobazar\.eu\/[^"]+)"/i);
-      const images = imgMatch ? [imgMatch[1]] : [];
+      const images = thumbsMatch ? [thumbsMatch[1]] : imgMatch ? [imgMatch[1]] : [];
+
+      // If we have an AB ID but no thumbs URL, try to construct one from pattern
+      // Pattern: https://www.autobazar.eu/thumbs/{folder}/{id}_big.jpg
+      if (images.length === 0 && idMatch[1]) {
+        // We'll use img.autobazar.eu as fallback, proxy will handle it
+      }
 
       // Extract year, km, fuel, power from text
       const textContent = block.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");

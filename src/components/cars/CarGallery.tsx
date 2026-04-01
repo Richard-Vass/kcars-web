@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
+import { proxyImageUrl } from "@/lib/utils";
 
 interface CarGalleryProps {
   images: string[];
@@ -13,8 +13,8 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-[16/10] bg-zinc-800 rounded-xl flex items-center justify-center">
-        <svg className="w-24 h-24 text-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="aspect-[16/10] bg-[#0c1221] rounded-2xl flex items-center justify-center">
+        <svg className="w-24 h-24 text-[#1e293b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </div>
@@ -24,13 +24,11 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
   return (
     <div>
       {/* Main image */}
-      <div className="aspect-[16/10] bg-zinc-800 rounded-xl relative overflow-hidden">
-        <Image
-          src={images[activeIndex]}
+      <div className="aspect-[16/10] bg-[#0c1221] rounded-2xl relative overflow-hidden">
+        <img
+          src={proxyImageUrl(images[activeIndex])}
           alt={`${alt} - ${activeIndex + 1}`}
-          fill
-          className="object-cover"
-          priority
+          className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Navigation arrows */}
         {images.length > 1 && (
@@ -54,7 +52,7 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
           </>
         )}
         {/* Counter */}
-        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded">
+        <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2.5 py-1 rounded-lg">
           {activeIndex + 1} / {images.length}
         </div>
       </div>
@@ -67,10 +65,10 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
               key={i}
               onClick={() => setActiveIndex(i)}
               className={`relative w-20 h-14 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-colors ${
-                i === activeIndex ? "border-red-500" : "border-transparent opacity-60 hover:opacity-100"
+                i === activeIndex ? "border-[#ef4444]" : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
-              <Image src={img} alt={`${alt} thumb ${i + 1}`} fill className="object-cover" />
+              <img src={proxyImageUrl(img)} alt={`${alt} thumb ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
             </button>
           ))}
         </div>

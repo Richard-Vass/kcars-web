@@ -17,9 +17,31 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "KCars | Autobazár",
+  title: {
+    default: "K cars | Autobazár Nový Život — Predaj jazdených vozidiel",
+    template: "%s | K cars Autobazár",
+  },
   description:
-    "Široký výber overených jazdených vozidiel za férové ceny. Wide selection of verified used vehicles at fair prices.",
+    "K cars s.r.o. — Autobazár v Novom Živote. Široký výber overených jazdených vozidiel za férové ceny. Výkup, komisný predaj, financovanie. ☎ 0905 489 662",
+  keywords: [
+    "autobazár", "autobazar", "jazdené autá", "ojazdené autá", "predaj áut",
+    "výkup áut", "komisný predaj", "leasing", "financovanie",
+    "Nový Život", "Šamorín", "Dunajská Streda", "Eliášovce",
+    "K cars", "kcars", "autobazar.eu",
+  ],
+  authors: [{ name: "K cars s.r.o." }],
+  openGraph: {
+    title: "K cars | Autobazár Nový Život",
+    description: "Široký výber overených jazdených vozidiel za férové ceny. Výkup, komisný predaj, financovanie.",
+    url: "https://kcars.sk",
+    siteName: "K cars",
+    locale: "sk_SK",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: "/favicon.ico",
   },
