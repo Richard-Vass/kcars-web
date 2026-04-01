@@ -22,40 +22,10 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#ef4444] to-transparent opacity-40" />
       </div>
 
-      {/* Giant logo in background with fire gradient */}
-      <div className="absolute inset-0 flex items-center justify-end overflow-hidden pointer-events-none">
-        {/* Blurred glow layer */}
-        <div
-          className="absolute w-[900px] h-[560px] lg:w-[1100px] lg:h-[680px] right-[-80px] lg:right-[-20px] top-1/2 -translate-y-1/2 blur-[80px]"
-          style={{
-            background: "linear-gradient(135deg, rgba(239,68,68,0.4), rgba(249,115,22,0.3), rgba(239,68,68,0.2))",
-            WebkitMaskImage: "url(/images/logo.png)",
-            WebkitMaskSize: "contain",
-            WebkitMaskRepeat: "no-repeat",
-            WebkitMaskPosition: "center",
-            maskImage: "url(/images/logo.png)",
-            maskSize: "contain",
-            maskRepeat: "no-repeat",
-            maskPosition: "center",
-          }}
-        />
-        {/* Sharp gradient logo */}
-        <div
-          className="absolute w-[900px] h-[560px] lg:w-[1100px] lg:h-[680px] right-[-80px] lg:right-[-20px] top-1/2 -translate-y-1/2"
-          style={{
-            background: "linear-gradient(135deg, #ef4444 0%, #f97316 40%, #ef4444 70%, #f87171 100%)",
-            opacity: 0.25,
-            WebkitMaskImage: "url(/images/logo.png)",
-            WebkitMaskSize: "contain",
-            WebkitMaskRepeat: "no-repeat",
-            WebkitMaskPosition: "center",
-            maskImage: "url(/images/logo.png)",
-            maskSize: "contain",
-            maskRepeat: "no-repeat",
-            maskPosition: "center",
-          }}
-        />
-      </div>
+      {/* Video background — placeholder until real video */}
+      {/* <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-30 z-[1]">
+        <source src="/videos/hero.mp4" type="video/mp4" />
+      </video> */}
 
       {/* Particles */}
       <div className="absolute inset-0 overflow-hidden">
@@ -66,32 +36,50 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
 
       {/* Content */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8 pt-[76px]">
-        <div className="max-w-2xl">
-          {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-0.5 bg-gradient-to-r from-[#ef4444] to-[#f97316] rounded-full" />
-            <span className="text-xs font-semibold uppercase tracking-[2px] text-[#f87171]">
-              {locale === "sk" ? "Prémiové vozidlá" : locale === "hu" ? "Prémium járművek" : locale === "de" ? "Premium Fahrzeuge" : "Premium Vehicles"}
-            </span>
+        <div className="flex flex-col items-center text-center">
+          {/* Giant logo with fire gradient */}
+          <div className="relative mb-8 mt-8">
+            {/* Glow behind */}
+            <div
+              className="absolute inset-0 blur-[40px] opacity-60"
+              style={{
+                background: "linear-gradient(135deg, #ef4444, #f97316)",
+                WebkitMaskImage: "url(/images/logo.png)",
+                WebkitMaskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskImage: "url(/images/logo.png)",
+                maskSize: "contain",
+                maskRepeat: "no-repeat",
+                maskPosition: "center",
+              }}
+            />
+            {/* Logo with gradient */}
+            <div
+              className="relative w-[320px] h-[120px] sm:w-[450px] sm:h-[165px] md:w-[550px] md:h-[200px]"
+              style={{
+                background: "linear-gradient(135deg, #ef4444 0%, #f97316 35%, #fbbf24 60%, #f97316 80%, #ef4444 100%)",
+                WebkitMaskImage: "url(/images/logo.png)",
+                WebkitMaskSize: "contain",
+                WebkitMaskRepeat: "no-repeat",
+                WebkitMaskPosition: "center",
+                maskImage: "url(/images/logo.png)",
+                maskSize: "contain",
+                maskRepeat: "no-repeat",
+                maskPosition: "center",
+              }}
+            />
           </div>
 
-          <h1 className="text-[clamp(3rem,5.5vw,4.8rem)] font-black leading-[1.02] mb-7 tracking-[-2px]" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
-            {t.hero.title.split(" ").map((word, i) => (
-              <span key={i}>
-                {i < 3 ? (
-                  <span className="bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent">{word} </span>
-                ) : (
-                  <span>{word} </span>
-                )}
-              </span>
-            ))}
+          <h1 className="text-[clamp(2.2rem,4.5vw,3.8rem)] font-black leading-[1.08] mb-6 tracking-[-1.5px] max-w-3xl" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
+            {t.hero.title}
           </h1>
 
-          <p className="text-lg text-[#94a3b8] max-w-[460px] mb-10 leading-relaxed">
+          <p className="text-lg text-[#94a3b8] max-w-xl mx-auto mb-10 leading-relaxed">
             {t.hero.subtitle}
           </p>
 
-          <div className="flex gap-4 flex-wrap mb-12">
+          <div className="flex gap-4 flex-wrap justify-center mb-12">
             <Link
               href={`/${locale}/ponuka`}
               className="bg-gradient-to-r from-[#ef4444] to-[#f97316] text-white font-semibold px-8 py-4 rounded-[20px] text-base shadow-[0_4px_24px_rgba(239,68,68,0.3)] hover:shadow-[0_12px_36px_rgba(239,68,68,0.4)] hover:-translate-y-1 transition-all inline-flex items-center gap-2"
@@ -110,7 +98,7 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
           </div>
 
           {/* Trust items */}
-          <div className="flex gap-8 pt-6 border-t border-white/5">
+          <div className="flex gap-8 pt-6 border-t border-white/5 justify-center">
             {[
               locale === "sk" ? "Overené vozidlá" : locale === "hu" ? "Ellenőrzött járművek" : locale === "de" ? "Geprüfte Fahrzeuge" : "Verified vehicles",
               locale === "sk" ? "Záruka na každé auto" : locale === "hu" ? "Garancia minden autóra" : locale === "de" ? "Garantie auf jedes Auto" : "Warranty on every car",
