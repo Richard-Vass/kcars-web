@@ -2,32 +2,69 @@
 
 import { useState } from "react";
 
-const rates = [
-  { name: "Štandard", rate: 0.069, desc: "Bežný spotrebiteľský úver" },
-  { name: "Akcia", rate: 0.049, desc: "Akciová sadzba pre vybrané modely" },
-  { name: "Leasing", rate: 0.039, desc: "Finančný leasing pre podnikateľov" },
+// VÚB Banka rate table — monthly rates derived from actual VÚB offer
+// Rate varies by term length (shorter = higher rate)
+const vubMonthlyRates: Record<number, number> = {
+  12: 0.0160,
+  18: 0.0158,
+  24: 0.0155,
+  30: 0.0153,
+  36: 0.0150,
+  42: 0.0148,
+  48: 0.014618,  // VÚB: 571.07 at 19600/48
+  54: 0.01420,
+  60: 0.013780,  // VÚB: 482.24 at 19600/60
+  66: 0.01350,
+  72: 0.013248,  // VÚB: 424.06 at 19600/72
+  78: 0.01305,
+  84: 0.012879,  // VÚB: 383.24 at 19600/84
+  90: 0.01275,
+  96: 0.012620,  // VÚB: 353.37 at 19600/96
+};
+
+function getMonthlyRate(months: number, type: number): number {
+  // Type 0 = Splátkový predaj (VÚB sadzba)
+  // Type 1 = Leasing (nižšia sadzba ~75% VÚB)
+  // Type 2 = Prefinancovanie (~90% VÚB)
+  const multiplier = type === 0 ? 1.0 : type === 1 ? 0.75 : 0.90;
+
+  // Find closest matching rate
+  const keys = Object.keys(vubMonthlyRates).map(Number).sort((a, b) => a - b);
+  let closest = keys[0];
+  for (const k of keys) {
+    if (Math.abs(k - months) < Math.abs(closest - months)) {
+      closest = k;
+    }
+  }
+  return vubMonthlyRates[closest] * multiplier;
+}
+
+const rateTypes = [
+  { name: "Splátkový predaj", desc: "Úver cez VÚB Banku • Akontácia od 0%" },
+  { name: "Leasing", desc: "Finančný leasing • Pre podnikateľov" },
+  { name: "Prefinancovanie", desc: "Prefinancujte vaše auto • Hotovosť ihneď" },
 ];
 
 export default function LeasingPage() {
-  const [price, setPrice] = useState(20000);
+  const [price, setPrice] = useState(24500);
   const [downPaymentPct, setDownPaymentPct] = useState(20);
   const [months, setMonths] = useState(48);
   const [selectedRate, setSelectedRate] = useState(0);
 
   const downPayment = Math.round(price * (downPaymentPct / 100));
   const loanAmount = price - downPayment;
-  const monthlyRate = rates[selectedRate].rate / 12;
+  const monthlyRate = getMonthlyRate(months, selectedRate);
+  const annualRate = monthlyRate * 12;
 
   const monthlyPayment =
-    loanAmount > 0
+    loanAmount > 0 && monthlyRate > 0
       ? (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, months)) /
         (Math.pow(1 + monthlyRate, months) - 1)
       : 0;
 
   const totalPaid = monthlyPayment * months + downPayment;
   const totalInterest = totalPaid - price;
-
-  const inputClass = "w-full bg-[#060a12] border border-white/5 rounded-xl px-4 py-3 text-sm text-[#f0f2f5] focus:border-[#ef4444]/50 focus:outline-none transition-colors";
+  const koeficient = price > 0 ? totalPaid / price : 0;
 
   return (
     <div className="pt-24 pb-16">
@@ -39,10 +76,10 @@ export default function LeasingPage() {
             <div className="w-8 h-0.5 bg-gradient-to-r from-[#f97316] to-[#ef4444] rounded-full" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-[#f0f2f5]" style={{ fontFamily: "var(--font-outfit), sans-serif" }}>
-            Leasingová kalkulačka
+            Kalkulačka splátok
           </h1>
           <p className="text-[#94a3b8] mt-3 max-w-lg mx-auto">
-            Vypočítajte si orientačné mesačné splátky. Skutočné podmienky sa môžu líšiť podľa bonity.
+            Vypočítajte si orientačné mesačné splátky. Schválenie úveru do 30 minút. Akontácia od 0%.
           </p>
         </div>
 
@@ -53,7 +90,7 @@ export default function LeasingPage() {
             <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-6">
               <h3 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-wider mb-4">Typ financovania</h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {rates.map((r, i) => (
+                {rateTypes.map((r, i) => (
                   <button
                     key={i}
                     type="button"
@@ -65,10 +102,7 @@ export default function LeasingPage() {
                     }`}
                   >
                     <p className="font-semibold text-[#f0f2f5]">{r.name}</p>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent mt-1">
-                      {(r.rate * 100).toFixed(1)}%
-                    </p>
-                    <p className="text-xs text-[#6b7a94] mt-1">{r.desc}</p>
+                    <p className="text-xs text-[#8b9bb4] mt-2">{r.desc}</p>
                   </button>
                 ))}
               </div>
@@ -86,7 +120,7 @@ export default function LeasingPage() {
                       onChange={(e) => setPrice(Number(e.target.value))}
                       className="w-28 bg-[#060a12] border border-white/5 rounded-lg px-3 py-1.5 text-sm text-right text-[#f0f2f5] focus:border-[#ef4444]/50 focus:outline-none"
                     />
-                    <span className="text-sm text-[#6b7a94]">€</span>
+                    <span className="text-sm text-[#8b9bb4]">€</span>
                   </div>
                 </div>
                 <input
@@ -98,7 +132,7 @@ export default function LeasingPage() {
                   onChange={(e) => setPrice(Number(e.target.value))}
                   className="w-full accent-[#ef4444]"
                 />
-                <div className="flex justify-between text-xs text-[#6b7a94] mt-1">
+                <div className="flex justify-between text-xs text-[#8b9bb4] mt-1">
                   <span>3 000 €</span>
                   <span>100 000 €</span>
                 </div>
@@ -114,15 +148,15 @@ export default function LeasingPage() {
                 <input
                   type="range"
                   min={0}
-                  max={80}
-                  step={5}
+                  max={50}
+                  step={10}
                   value={downPaymentPct}
                   onChange={(e) => setDownPaymentPct(Number(e.target.value))}
                   className="w-full accent-[#ef4444]"
                 />
-                <div className="flex justify-between text-xs text-[#6b7a94] mt-1">
+                <div className="flex justify-between text-xs text-[#8b9bb4] mt-1">
                   <span>0%</span>
-                  <span>80%</span>
+                  <span>50%</span>
                 </div>
               </div>
 
@@ -134,16 +168,56 @@ export default function LeasingPage() {
                 <input
                   type="range"
                   min={12}
-                  max={84}
-                  step={6}
+                  max={96}
+                  step={12}
                   value={months}
                   onChange={(e) => setMonths(Number(e.target.value))}
                   className="w-full accent-[#ef4444]"
                 />
-                <div className="flex justify-between text-xs text-[#6b7a94] mt-1">
+                <div className="flex justify-between text-xs text-[#8b9bb4] mt-1">
                   <span>12 mes.</span>
-                  <span>84 mes.</span>
+                  <span>96 mes.</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Quick comparison table */}
+            <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-6">
+              <h3 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-wider mb-4">Porovnanie splátok</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-white/5">
+                      <th className="text-left text-[#8b9bb4] font-medium py-2 pr-4">Akontácia</th>
+                      {[10, 20, 30, 40, 50].map((pct) => (
+                        <th key={pct} className="text-right text-[#8b9bb4] font-medium py-2 px-2">{pct}%</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="text-[#8b9bb4] py-2 pr-4">Výška úveru</td>
+                      {[10, 20, 30, 40, 50].map((pct) => {
+                        const loan = price - Math.round(price * pct / 100);
+                        return <td key={pct} className="text-right text-[#f0f2f5] py-2 px-2">{loan.toLocaleString()} €</td>;
+                      })}
+                    </tr>
+                    <tr className="border-t border-white/5">
+                      <td className="text-[#8b9bb4] py-2 pr-4">Splátka / {months} mes.</td>
+                      {[10, 20, 30, 40, 50].map((pct) => {
+                        const loan = price - Math.round(price * pct / 100);
+                        const r = getMonthlyRate(months, selectedRate);
+                        const pmt = loan > 0 ? (loan * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1) : 0;
+                        const isSelected = pct === downPaymentPct;
+                        return (
+                          <td key={pct} className={`text-right py-2 px-2 font-semibold ${isSelected ? "text-[#f87171]" : "text-[#f0f2f5]"}`}>
+                            {Math.round(pmt).toLocaleString()} €
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -154,40 +228,63 @@ export default function LeasingPage() {
               <h3 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-wider mb-6">Váš výpočet</h3>
 
               <div className="text-center mb-6">
-                <p className="text-sm text-[#6b7a94]">Mesačná splátka</p>
+                <p className="text-sm text-[#8b9bb4]">Mesačná splátka</p>
                 <p className="text-5xl font-black bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent mt-2">
                   {Math.round(monthlyPayment).toLocaleString()} €
                 </p>
-                <p className="text-xs text-[#6b7a94] mt-2">
-                  {rates[selectedRate].name} — {(rates[selectedRate].rate * 100).toFixed(1)}% p.a.
+                <p className="text-xs text-[#8b9bb4] mt-2">
+                  {rateTypes[selectedRate].name} • {months} mesiacov
                 </p>
               </div>
 
               <div className="space-y-3 pt-4 border-t border-white/5">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7a94]">Cena vozidla</span>
+                  <span className="text-[#8b9bb4]">Cena vozidla</span>
                   <span className="text-[#f0f2f5] font-medium">{price.toLocaleString()} €</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7a94]">Akontácia</span>
+                  <span className="text-[#8b9bb4]">Akontácia ({downPaymentPct}%)</span>
                   <span className="text-[#f0f2f5] font-medium">{downPayment.toLocaleString()} €</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7a94]">Výška úveru</span>
+                  <span className="text-[#8b9bb4]">Výška úveru</span>
                   <span className="text-[#f0f2f5] font-medium">{loanAmount.toLocaleString()} €</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7a94]">Počet splátok</span>
+                  <span className="text-[#8b9bb4]">Počet splátok</span>
                   <span className="text-[#f0f2f5] font-medium">{months}×</span>
                 </div>
                 <div className="flex justify-between text-sm pt-3 border-t border-white/5">
-                  <span className="text-[#6b7a94]">Zaplatíte celkom</span>
+                  <span className="text-[#8b9bb4]">Zaplatíte celkom</span>
                   <span className="text-[#f0f2f5] font-semibold">{Math.round(totalPaid).toLocaleString()} €</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[#6b7a94]">Úroky celkom</span>
+                  <span className="text-[#8b9bb4]">Koeficient navýšenia</span>
+                  <span className="text-[#f0f2f5] font-semibold">{koeficient.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#8b9bb4]">Úroky celkom</span>
                   <span className="text-[#f87171] font-semibold">{Math.round(totalInterest).toLocaleString()} €</span>
                 </div>
+              </div>
+
+              {/* Benefits */}
+              <div className="mt-6 pt-4 border-t border-white/5 space-y-2">
+                {[
+                  "Schválenie do 30 minút",
+                  "Bez obmedzenia rokom výroby",
+                  "Ihneď sa stávate majiteľom",
+                  "Odchádzate s plne poisteným autom",
+                ].map((b) => (
+                  <div key={b} className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded flex items-center justify-center flex-shrink-0">
+                      <svg className="w-2.5 h-2.5 text-[#22c55e]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <span className="text-xs text-[#8b9bb4]">{b}</span>
+                  </div>
+                ))}
               </div>
 
               <a
@@ -197,8 +294,8 @@ export default function LeasingPage() {
                 Chcem financovanie
               </a>
 
-              <p className="text-xs text-[#6b7a94] mt-4 text-center">
-                * Orientačný výpočet. Skutočné podmienky záviseli od bonity klienta.
+              <p className="text-xs text-[#8b9bb4] mt-4 text-center">
+                * Orientačný výpočet. Skutočné podmienky závisia od bonity klienta.
               </p>
             </div>
           </div>
