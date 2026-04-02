@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     siteName: "K cars",
     locale: "sk_SK",
     type: "website",
+    images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],
   },
   robots: {
     index: true,
@@ -66,11 +67,25 @@ export default async function LocaleLayout({
 
   const t = await getTranslations(locale as Locale);
 
+  const alternateLinks = locales.map((l) => ({
+    hrefLang: l,
+    href: `https://kcars.sk/${l}`,
+  }));
+
   return (
-    <div className={`${outfit.variable} min-h-full flex flex-col`}>
-      <Navbar locale={locale as Locale} t={t} />
-      <main className="flex-1">{children}</main>
-      <Footer locale={locale as Locale} t={t} />
-    </div>
+    <html lang={locale} className={`${inter.variable} ${outfit.variable} h-full antialiased`}>
+      <head>
+        {/* Hreflang tags */}
+        {alternateLinks.map((link) => (
+          <link key={link.hrefLang} rel="alternate" hrefLang={link.hrefLang} href={link.href} />
+        ))}
+        <link rel="alternate" hrefLang="x-default" href="https://kcars.sk/sk" />
+      </head>
+      <body className="min-h-full flex flex-col bg-[#060a12] text-[#f0f2f5] font-sans">
+        <Navbar locale={locale as Locale} t={t} />
+        <main className="flex-1">{children}</main>
+        <Footer locale={locale as Locale} t={t} />
+      </body>
+    </html>
   );
 }

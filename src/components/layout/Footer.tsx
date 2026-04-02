@@ -61,7 +61,7 @@ export default function Footer({ locale, t }: FooterProps) {
             </h3>
             <ul className="space-y-2 text-sm text-[#6b7a94]">
               <li>
-                <a href={`tel:${companyInfo.phone}`} className="hover:text-[#f87171] transition-colors">
+                <a href={`tel:${companyInfo.phoneTel}`} className="hover:text-[#f87171] transition-colors">
                   {companyInfo.phone}
                 </a>
               </li>
@@ -79,12 +79,12 @@ export default function Footer({ locale, t }: FooterProps) {
             &copy; {new Date().getFullYear()} KCARS | {t.footer.rights}
           </p>
           <div className="flex gap-6">
-            <span className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] cursor-pointer transition-colors">
+            <Link href={`/${locale}/ochrana-udajov`} className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] transition-colors">
               {locale === "sk" ? "Ochrana osobných údajov" : t.footer.privacy}
-            </span>
-            <span className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] cursor-pointer transition-colors">
+            </Link>
+            <Link href={`/${locale}/cookies`} className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] transition-colors">
               {locale === "sk" ? "Používanie cookies" : t.footer.terms}
-            </span>
+            </Link>
           </div>
         </div>
       </div>

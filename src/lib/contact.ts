@@ -5,6 +5,7 @@ export const companyInfo = {
   ico: "52 792 056",
   court: "Okresný súd Trnava, Vložka číslo: 45752/T",
   phone: "+421 905 489 662",
+  phoneTel: "+421905489662",
   email: "kcars.kcars1@gmail.com",
   web: "www.kcars.sk",
   mapLat: 47.9862,

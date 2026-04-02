@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { Locale, getTranslations } from "@/lib/i18n";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Komisný predaj — Predáme vaše auto",
+  description: "Komisný predaj áut s províziou len 3%. Parkovné zdarma, bezplatná inzercia, čistenie vozidla, zabezpečenie STK. K cars autobazár Nový Život.",
+};
 
 interface Props {
   params: Promise<{ locale: string }>;

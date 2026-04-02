@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { Locale, getTranslations } from "@/lib/i18n";
 import ContactForm from "@/components/forms/ContactForm";
 import { companyInfo } from "@/lib/contact";
+
+export const metadata: Metadata = {
+  title: "Kontakt — K cars autobazár",
+  description: `K cars s.r.o., ${companyInfo.address}, ${companyInfo.city}. Tel: ${companyInfo.phone}, Email: ${companyInfo.email}. Otváracie hodiny: Po-Pi 8-17, So 9-13.`,
+};
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -73,7 +79,7 @@ export default async function ContactPage({ params }: Props) {
                 </svg>
                 {t.contact.phone}
               </h3>
-              <a href={`tel:${companyInfo.phone}`} className="text-[#f0f2f5] hover:text-[#f87171] transition-colors font-medium">
+              <a href={`tel:${companyInfo.phoneTel}`} className="text-[#f0f2f5] hover:text-[#f87171] transition-colors font-medium">
                 {companyInfo.phone}
               </a>
               <br />

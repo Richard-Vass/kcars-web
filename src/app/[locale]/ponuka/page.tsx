@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { Locale, getTranslations } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
 import CarCard from "@/components/cars/CarCard";
 import CarFilters from "@/components/cars/CarFilters";
 import { Car } from "@/types";
+
+export const metadata: Metadata = {
+  title: "Ponuka vozidiel — Jazdené autá na predaj",
+  description: "Aktuálna ponuka 60+ overených jazdených vozidiel. Audi, BMW, Mercedes, Škoda, VW, Tesla a ďalšie. Filtrujte podľa značky, ceny, roku. K cars autobazár.",
+};
 
 interface Props {
   params: Promise<{ locale: string }>;

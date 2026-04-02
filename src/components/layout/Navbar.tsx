@@ -108,6 +108,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
           <button
             className="md:hidden text-white"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Zavrieť menu" : "Otvoriť menu"}
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {mobileOpen ? (
