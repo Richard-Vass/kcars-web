@@ -8,6 +8,9 @@ import { proxyImageUrl } from "@/lib/utils";
 import CarGallery from "@/components/cars/CarGallery";
 import PaymentCalculator from "@/components/cars/PaymentCalculator";
 import ReservationForm from "@/components/forms/ReservationForm";
+import ShareButtons from "@/components/cars/ShareButtons";
+import SimilarCars from "@/components/cars/SimilarCars";
+import CarJsonLd from "@/components/seo/CarJsonLd";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -42,6 +45,7 @@ export default async function CarDetailPage({ params }: Props) {
   if (!data) notFound();
 
   const car = data as Car;
+  const carUrl = `https://kcars.sk/${locale}/ponuka/${car.slug}`;
 
   const descriptionKey = `description_${locale}` as keyof Car;
   const description = (car[descriptionKey] as string) || car.description_sk || "";
@@ -74,7 +78,7 @@ export default async function CarDetailPage({ params }: Props) {
     <div className="pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav className="mb-6 text-sm text-white/40">
+        <nav className="mb-6 text-sm text-[#8b9bb4]">
           <Link href={`/${locale}`} className="hover:text-white transition-colors">
             {t.nav.home}
           </Link>
@@ -83,7 +87,7 @@ export default async function CarDetailPage({ params }: Props) {
             {t.nav.cars}
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-white/70">{car.brand} {car.model}</span>
+          <span className="text-[#94a3b8]">{car.brand} {car.model}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -96,20 +100,20 @@ export default async function CarDetailPage({ params }: Props) {
               <h1 className="text-3xl font-bold text-white">
                 {car.brand} {car.model}
               </h1>
-              <p className="text-3xl font-bold text-red-500 mt-2">
+              <p className="text-3xl font-bold bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent mt-2">
                 {car.price.toLocaleString()} {t.common.eur}
               </p>
             </div>
 
             {/* Specs */}
-            <div className="bg-zinc-900 rounded-xl border border-white/10 p-6">
+            <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-6">
               <h3 className="text-lg font-semibold text-white mb-4">
                 {locale === "sk" ? "Parametre" : locale === "hu" ? "Paraméterek" : locale === "de" ? "Technische Daten" : "Specifications"}
               </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {specs.map((spec) => (
                   <div key={spec.label}>
-                    <p className="text-xs text-white/40 uppercase tracking-wider">{spec.label}</p>
+                    <p className="text-xs text-[#8b9bb4] uppercase tracking-wider">{spec.label}</p>
                     <p className="text-white font-medium mt-1">{spec.value}</p>
                   </div>
                 ))}
@@ -118,11 +122,11 @@ export default async function CarDetailPage({ params }: Props) {
 
             {/* Description */}
             {description && (
-              <div className="bg-zinc-900 rounded-xl border border-white/10 p-6">
+              <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-6">
                 <h3 className="text-lg font-semibold text-white mb-3">
                   {locale === "sk" ? "Popis" : locale === "hu" ? "Leírás" : locale === "de" ? "Beschreibung" : "Description"}
                 </h3>
-                <p className="text-white/70 leading-relaxed whitespace-pre-line">{description}</p>
+                <p className="text-[#94a3b8] leading-relaxed whitespace-pre-line">{description}</p>
               </div>
             )}
           </div>
@@ -134,7 +138,7 @@ export default async function CarDetailPage({ params }: Props) {
               <h1 className="text-3xl font-bold text-white">
                 {car.brand} {car.model}
               </h1>
-              <p className="text-3xl font-bold text-red-500 mt-2">
+              <p className="text-3xl font-bold bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent mt-2">
                 {car.price.toLocaleString()} {t.common.eur}
               </p>
               {car.status !== "available" && (
@@ -153,9 +157,20 @@ export default async function CarDetailPage({ params }: Props) {
             )}
 
             <PaymentCalculator price={car.price} t={t} />
+
+            {/* Share */}
+            <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-4">
+              <ShareButtons url={carUrl} title={`${car.brand} ${car.model} — ${car.price.toLocaleString()} €`} />
+            </div>
           </div>
         </div>
+
+        {/* Similar cars */}
+        <SimilarCars currentCar={car} locale={locale as Locale} />
       </div>
+
+      {/* JSON-LD */}
+      <CarJsonLd car={car} />
     </div>
   );
 }
