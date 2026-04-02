@@ -53,7 +53,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
           </Link>
 
           {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden lg:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -68,7 +68,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
           </div>
 
           {/* Language switcher + CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
@@ -106,7 +106,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden text-white"
+            className="lg:hidden text-white"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Zavrieť menu" : "Otvoriť menu"}
           >
@@ -123,7 +123,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-[#060a12]/95 backdrop-blur-xl border-t border-white/5">
+        <div className="lg:hidden bg-[#060a12]/95 backdrop-blur-xl border-t border-white/5">
           <div className="px-4 py-4 space-y-3">
             {navLinks.map((link) => (
               <Link

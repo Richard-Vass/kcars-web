@@ -98,7 +98,7 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
           </div>
 
           {/* Trust items */}
-          <div className="flex gap-8 pt-6 border-t border-white/5 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 pt-6 border-t border-white/5 justify-center items-center sm:items-start">
             {[
               locale === "sk" ? "Overené vozidlá" : locale === "hu" ? "Ellenőrzött járművek" : locale === "de" ? "Geprüfte Fahrzeuge" : "Verified vehicles",
               locale === "sk" ? "Záruka na každé auto" : locale === "hu" ? "Garancia minden autóra" : locale === "de" ? "Garantie auf jedes Auto" : "Warranty on every car",
