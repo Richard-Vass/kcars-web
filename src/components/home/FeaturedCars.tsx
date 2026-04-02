@@ -77,7 +77,7 @@ export default async function FeaturedCars({ locale, t }: FeaturedCarsProps) {
               <div className="p-6">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs text-[#6b7a94] uppercase tracking-wider font-medium">
+                    <p className="text-xs text-[#8b9bb4] uppercase tracking-wider font-medium">
                       {car.brand}
                     </p>
                     <h3 className="text-lg font-semibold text-[#f0f2f5] mt-1 group-hover:text-[#f87171] transition-colors">
@@ -89,7 +89,7 @@ export default async function FeaturedCars({ locale, t }: FeaturedCarsProps) {
                   </p>
                 </div>
 
-                <div className="mt-4 flex items-center gap-4 text-sm text-[#6b7a94]">
+                <div className="mt-4 flex items-center gap-4 text-sm text-[#8b9bb4]">
                   <span>{t.cars.year}: {car.year}</span>
                   <span>{car.mileage.toLocaleString()} {t.common.km}</span>
                   <span>{car.power_kw} {t.common.kw}</span>

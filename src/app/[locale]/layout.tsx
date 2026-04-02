@@ -17,6 +17,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kcars.sk"),
   title: {
     default: "K cars | Autobazár Nový Život — Predaj jazdených vozidiel",
     template: "%s | K cars Autobazár",

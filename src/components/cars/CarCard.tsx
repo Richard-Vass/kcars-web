@@ -61,7 +61,7 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
       <div className="p-6">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <p className="text-xs text-[#6b7a94] uppercase tracking-wider font-medium">{car.brand}</p>
+            <p className="text-xs text-[#8b9bb4] uppercase tracking-wider font-medium">{car.brand}</p>
             <h3 className="text-lg font-semibold text-[#f0f2f5] mt-1 group-hover:text-[#f87171] transition-colors">
               {car.brand} {car.model}
             </h3>
@@ -71,15 +71,15 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
           </p>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[#6b7a94]">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-[#8b9bb4]">
           <span>{car.year}</span>
-          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
+          <span className="w-1 h-1 rounded-full bg-[#8b9bb4]/30" />
           <span>{car.mileage.toLocaleString()} {t.common.km}</span>
-          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
+          <span className="w-1 h-1 rounded-full bg-[#8b9bb4]/30" />
           <span>{car.power_kw} {t.common.kw}</span>
-          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
+          <span className="w-1 h-1 rounded-full bg-[#8b9bb4]/30" />
           <span>{fuelLabels[car.fuel]?.[locale] || car.fuel}</span>
-          <span className="w-1 h-1 rounded-full bg-[#6b7a94]/30" />
+          <span className="w-1 h-1 rounded-full bg-[#8b9bb4]/30" />
           <span>{transmissionLabels[car.transmission]?.[locale] || car.transmission}</span>
         </div>
       </div>

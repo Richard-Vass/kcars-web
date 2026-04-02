@@ -75,14 +75,14 @@ export default function Footer({ locale, t }: FooterProps) {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-[#6b7a94]/50">
+          <p className="text-xs text-[#8b9bb4]">
             &copy; {new Date().getFullYear()} KCARS | {t.footer.rights}
           </p>
           <div className="flex gap-6">
-            <Link href={`/${locale}/ochrana-udajov`} className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] transition-colors">
+            <Link href={`/${locale}/ochrana-udajov`} className="text-xs text-[#8b9bb4] hover:text-[#6b7a94] transition-colors">
               {locale === "sk" ? "Ochrana osobných údajov" : t.footer.privacy}
             </Link>
-            <Link href={`/${locale}/cookies`} className="text-xs text-[#6b7a94]/50 hover:text-[#6b7a94] transition-colors">
+            <Link href={`/${locale}/cookies`} className="text-xs text-[#8b9bb4] hover:text-[#6b7a94] transition-colors">
               {locale === "sk" ? "Používanie cookies" : t.footer.terms}
             </Link>
           </div>
