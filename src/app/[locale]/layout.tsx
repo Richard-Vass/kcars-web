@@ -4,6 +4,8 @@ import { Inter, Outfit } from "next/font/google";
 import { locales, Locale, getTranslations } from "@/lib/i18n";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import WhatsAppButton from "@/components/ui/WhatsAppButton";
+import CookieBanner from "@/components/ui/CookieBanner";
 import "../globals.css";
 
 const inter = Inter({
@@ -86,6 +88,8 @@ export default async function LocaleLayout({
         <Navbar locale={locale as Locale} t={t} />
         <main className="flex-1">{children}</main>
         <Footer locale={locale as Locale} t={t} />
+        <WhatsAppButton />
+        <CookieBanner />
       </body>
     </html>
   );
