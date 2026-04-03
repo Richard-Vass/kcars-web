@@ -1,9 +1,10 @@
-export const locales = ["sk", "hu", "de", "en"] as const;
+export const locales = ["sk", "cs", "hu", "de", "en"] as const;
 export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "sk";
 
 export const localeNames: Record<Locale, string> = {
   sk: "Slovenčina",
+  cs: "Čeština",
   hu: "Magyar",
   de: "Deutsch",
   en: "English",
@@ -11,6 +12,7 @@ export const localeNames: Record<Locale, string> = {
 
 export const localeFlags: Record<Locale, string> = {
   sk: "🇸🇰",
+  cs: "🇨🇿",
   hu: "🇭🇺",
   de: "🇩🇪",
   en: "🇬🇧",

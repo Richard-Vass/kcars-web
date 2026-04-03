@@ -23,11 +23,14 @@ export default function Navbar({ locale, t }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
 
+  const l = (sk: string, cs: string, hu: string, de: string, en: string) =>
+    locale === "sk" ? sk : locale === "cs" ? cs : locale === "hu" ? hu : locale === "de" ? de : en;
+
   const navLinks = [
-    { href: `/${locale}/ponuka`, label: locale === "sk" ? "Ponuka vozidiel" : locale === "hu" ? "Autókínálat" : locale === "de" ? "Fahrzeugangebot" : "Car Listings" },
-    { href: `/${locale}/vykup-vozidiel`, label: locale === "sk" ? "Výkup vozidiel" : locale === "hu" ? "Járművásárlás" : locale === "de" ? "Fahrzeugankauf" : "Vehicle Buyback" },
-    { href: `/${locale}/komisny-predaj`, label: locale === "sk" ? "Komisný predaj" : locale === "hu" ? "Bizomány" : locale === "de" ? "Kommission" : "Consignment" },
-    { href: `/${locale}/leasing`, label: locale === "sk" ? "Financovanie" : locale === "hu" ? "Finanszírozás" : locale === "de" ? "Finanzierung" : "Financing" },
+    { href: `/${locale}/ponuka`, label: l("Ponuka vozidiel", "Nabídka vozů", "Autókínálat", "Fahrzeugangebot", "Car Listings") },
+    { href: `/${locale}/vykup-vozidiel`, label: l("Výkup vozidiel", "Výkup vozidel", "Járművásárlás", "Fahrzeugankauf", "Vehicle Buyback") },
+    { href: `/${locale}/komisny-predaj`, label: l("Komisný predaj", "Komisní prodej", "Bizomány", "Kommission", "Consignment") },
+    { href: `/${locale}/leasing`, label: l("Financovanie", "Financování", "Finanszírozás", "Finanzierung", "Financing") },
     { href: `/${locale}/kontakt`, label: t.nav.contact },
   ];
 
