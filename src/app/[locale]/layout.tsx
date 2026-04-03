@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import CookieBanner from "@/components/ui/CookieBanner";
 import BackToTop from "@/components/ui/BackToTop";
+import ChatBot from "@/components/ui/ChatBot";
 import "../globals.css";
 
 const inter = Inter({
@@ -89,6 +90,7 @@ export default async function LocaleLayout({
         <Navbar locale={locale as Locale} t={t} />
         <main className="flex-1">{children}</main>
         <Footer locale={locale as Locale} t={t} />
+        <ChatBot />
         <WhatsAppButton />
         <BackToTop />
         <CookieBanner />
