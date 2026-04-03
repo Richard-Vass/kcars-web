@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       }
 
       const nextData = JSON.parse(nextDataMatch[1]);
-      const cars = extractCarsFromNextData(nextData);
+      const cars = await extractCarsFromNextData(nextData);
 
       if (cars.length === 0) break;
       allCars.push(...cars);
@@ -160,7 +160,7 @@ interface ParsedCar {
   images: string[];
 }
 
-function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[] {
+async function extractCarsFromNextData(nextData: Record<string, unknown>): Promise<ParsedCar[]> {
   const cars: ParsedCar[] = [];
 
   try {
