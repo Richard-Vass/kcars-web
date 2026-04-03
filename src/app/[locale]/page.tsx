@@ -1,6 +1,8 @@
 import { Locale, getTranslations } from "@/lib/i18n";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedCars from "@/components/home/FeaturedCars";
+import RecentlySold from "@/components/home/RecentlySold";
+import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import Link from "next/link";
 
 export default async function HomePage({
@@ -83,7 +85,7 @@ export default async function HomePage({
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-4xl font-black bg-gradient-to-r from-[#ef4444] to-[#f97316] bg-clip-text text-transparent">
-                  {stat.value}
+                  <AnimatedCounter value={stat.value} />
                 </p>
                 <p className="text-sm text-[#8b9bb4] mt-1">{stat.label}</p>
               </div>
@@ -91,6 +93,9 @@ export default async function HomePage({
           </div>
         </div>
       </section>
+
+      {/* Recently sold */}
+      <RecentlySold locale={locale as Locale} />
 
       {/* CTA Section */}
       <section className="py-24 bg-gradient-to-br from-[#ef4444]/10 via-[#060a12] to-[#f97316]/10">

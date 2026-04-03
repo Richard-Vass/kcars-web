@@ -11,6 +11,8 @@ import ReservationForm from "@/components/forms/ReservationForm";
 import ShareButtons from "@/components/cars/ShareButtons";
 import SimilarCars from "@/components/cars/SimilarCars";
 import CarJsonLd from "@/components/seo/CarJsonLd";
+import GeneratePDF from "@/components/cars/GeneratePDF";
+import FavoriteButton from "@/components/cars/FavoriteButton";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -160,7 +162,11 @@ export default async function CarDetailPage({ params }: Props) {
 
             {/* Share */}
             <div className="bg-[#0c1221] rounded-2xl border border-white/5 p-4">
-              <ShareButtons url={carUrl} title={`${car.brand} ${car.model} — ${car.price.toLocaleString()} €`} />
+              <div className="flex items-center justify-between">
+                <ShareButtons url={carUrl} title={`${car.brand} ${car.model} — ${car.price.toLocaleString()} €`} />
+                <FavoriteButton carId={car.id} className="" />
+              </div>
+              <GeneratePDF car={car} />
             </div>
           </div>
         </div>

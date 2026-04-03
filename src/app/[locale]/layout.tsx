@@ -8,6 +8,7 @@ import WhatsAppButton from "@/components/ui/WhatsAppButton";
 import CookieBanner from "@/components/ui/CookieBanner";
 import BackToTop from "@/components/ui/BackToTop";
 import ChatBot from "@/components/ui/ChatBot";
+import Analytics from "@/components/seo/Analytics";
 import "../globals.css";
 
 const inter = Inter({
@@ -94,6 +95,7 @@ export default async function LocaleLayout({
         <WhatsAppButton />
         <BackToTop />
         <CookieBanner />
+        <Analytics />
       </body>
     </html>
   );

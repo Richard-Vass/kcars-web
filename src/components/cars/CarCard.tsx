@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Car } from "@/types";
 import { Locale } from "@/lib/i18n";
 import { proxyImageUrl } from "@/lib/utils";
+import FavoriteButton from "@/components/cars/FavoriteButton";
 
 interface CarCardProps {
   car: Car;
@@ -45,6 +46,9 @@ export default function CarCard({ car, locale, t }: CarCardProps) {
             </svg>
           </div>
         )}
+
+        {/* Favorite button */}
+        <FavoriteButton carId={car.id} className="absolute top-3 left-3 bg-black/40 backdrop-blur-sm w-8 h-8 rounded-full flex items-center justify-center" />
 
         {car.status === "reserved" && (
           <div className="absolute top-3 right-3 bg-[#f97316] text-white text-xs font-bold px-2.5 py-1 rounded-lg">
