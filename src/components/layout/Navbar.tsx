@@ -77,7 +77,7 @@ export default function Navbar({ locale, t }: NavbarProps) {
                 onClick={() => setLangOpen(!langOpen)}
                 className="flex items-center gap-1 text-sm text-[#6b7a94] hover:text-[#f0f2f5] transition-colors"
               >
-                {localeFlags[locale]} {locale.toUpperCase()}
+                {localeFlags[locale]} {locale === "cs" ? "CZ" : locale.toUpperCase()}
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
