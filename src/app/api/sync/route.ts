@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-// Auto-sync from autobazar.eu dealer page → KCars Supabase
-// Runs as Vercel cron every hour: GET /api/sync
-// Also callable manually: GET /api/sync?key=SYNC_SECRET_KEY
+// Auto-sync from autobazar.eu → KCars Supabase
+// Uses __NEXT_DATA__ JSON from AB.eu dealer page (structured data, not HTML scraping)
+// Runs as Vercel cron: GET /api/sync
 
 const DEALER_URL = "https://www.autobazar.eu/predajca/zolino2/";
 const MAX_PAGES = 10;
 
 export async function GET(request: NextRequest) {
-  // Auth check (skip for Vercel cron which sends authorization header)
   const authHeader = request.headers.get("authorization");
   const key = request.nextUrl.searchParams.get("key");
   const isCron = authHeader === `Bearer ${process.env.CRON_SECRET}`;
@@ -20,26 +19,39 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Scrape all pages from dealer profile
-    const allCars: ScrapedCar[] = [];
+    const allCars: ParsedCar[] = [];
 
     for (let page = 1; page <= MAX_PAGES; page++) {
       const url = page === 1 ? DEALER_URL : `${DEALER_URL}?page=${page}`;
       const response = await fetch(url, {
-        headers: { "User-Agent": "KCars-Sync/1.0" },
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; KCars/1.0)" },
       });
 
       if (!response.ok) break;
-
       const html = await response.text();
-      const cars = parseListingPage(html);
+
+      // Extract __NEXT_DATA__ JSON
+      const nextDataMatch = html.match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/);
+      if (!nextDataMatch) {
+        // Fallback: try HTML parsing
+        const htmlCars = parseHtmlFallback(html);
+        if (htmlCars.length === 0) break;
+        allCars.push(...htmlCars);
+        continue;
+      }
+
+      const nextData = JSON.parse(nextDataMatch[1]);
+      const cars = extractCarsFromNextData(nextData);
 
       if (cars.length === 0) break;
       allCars.push(...cars);
     }
 
     if (allCars.length === 0) {
-      return NextResponse.json({ error: "No cars found on dealer page" }, { status: 500 });
+      return NextResponse.json({
+        error: "No cars found",
+        hint: "AB.eu page structure may have changed",
+      }, { status: 500 });
     }
 
     // Get existing cars from DB
@@ -62,14 +74,7 @@ export async function GET(request: NextRequest) {
 
       const ex = existingMap.get(car.abId);
 
-      // Fetch all photos from detail page
-      const allPhotos = await fetchCarPhotos(car.abId);
-      if (allPhotos.length > 0) {
-        car.images = allPhotos;
-      }
-
       if (ex) {
-        // Update price, mileage, or photos
         if (ex.price !== car.price || ex.mileage !== car.mileage) {
           await supabase
             .from("cars")
@@ -86,7 +91,6 @@ export async function GET(request: NextRequest) {
           unchanged++;
         }
       } else {
-        // New car — insert
         const slug = generateSlug(car.brand, car.model, car.year);
         await supabase.from("cars").insert({
           brand: car.brand,
@@ -98,6 +102,7 @@ export async function GET(request: NextRequest) {
           fuel: car.fuel,
           transmission: car.transmission,
           power_kw: car.powerKw,
+          engine_capacity: car.engineCapacity,
           color: car.color,
           body_type: car.bodyType,
           doors: 4,
@@ -110,7 +115,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Mark cars not on AB.eu anymore as sold
+    // Mark removed cars as sold
     let removed = 0;
     for (const [abId, ex] of existingMap) {
       if (abId && !scrapedIds.has(abId) && ex.status === "available") {
@@ -139,7 +144,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-interface ScrapedCar {
+interface ParsedCar {
   abId: string;
   brand: string;
   model: string;
@@ -149,107 +154,142 @@ interface ScrapedCar {
   fuel: string;
   transmission: string;
   powerKw: number;
+  engineCapacity: number;
   color: string;
   bodyType: string;
   images: string[];
 }
 
-function parseListingPage(html: string): ScrapedCar[] {
-  const cars: ScrapedCar[] = [];
+function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[] {
+  const cars: ParsedCar[] = [];
 
-  // Match car listing blocks — AB.eu uses structured HTML with data attributes
-  // Each car has a link to /inzerat/[id]/...
-  const carBlocks = html.match(/<a[^>]*href="\/inzerat\/(\d+)\/[^"]*"[^>]*>[\s\S]*?<\/a>/gi) || [];
+  try {
+    // Navigate through __NEXT_DATA__ structure to find car listings
+    // AB.eu uses pageProps.dehydratedState or similar
+    const props = nextData.props as Record<string, unknown>;
+    const pageProps = props?.pageProps as Record<string, unknown>;
 
-  // Alternative: match article or div blocks with car data
-  const articleBlocks = html.match(/<article[\s\S]*?<\/article>/gi) || [];
-  const blocks = articleBlocks.length > 0 ? articleBlocks : carBlocks;
+    // Find car array in various possible locations
+    let listings: Record<string, unknown>[] = [];
 
-  for (const block of blocks) {
-    try {
-      // Extract AB ID from link
-      const idMatch = block.match(/\/inzerat\/(\d+)\//);
-      if (!idMatch) continue;
-      const abId = idMatch[1];
-
-      // Extract title
-      const titleMatch = block.match(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/i);
-      const title = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").trim() : "";
-      if (!title) continue;
-
-      // Extract price
-      const priceMatch = block.match(/([\d\s,.]+)\s*€/);
-      const price = priceMatch
-        ? parseFloat(priceMatch[1].replace(/\s/g, "").replace(",", "."))
-        : 0;
-
-      // Extract image — prefer thumbs URL (works without hotlink protection)
-      const thumbsMatch = block.match(/(?:src|data-src)="(https:\/\/www\.autobazar\.eu\/thumbs\/[^"]+)"/i);
-      const imgMatch = block.match(/(?:src|data-src)="(https:\/\/img\.autobazar\.eu\/[^"]+)"/i);
-      const images = thumbsMatch ? [thumbsMatch[1]] : imgMatch ? [imgMatch[1]] : [];
-
-      // If we have an AB ID but no thumbs URL, try to construct one from pattern
-      // Pattern: https://www.autobazar.eu/thumbs/{folder}/{id}_big.jpg
-      if (images.length === 0 && idMatch[1]) {
-        // We'll use img.autobazar.eu as fallback, proxy will handle it
+    // Try common Next.js data paths
+    const findArrays = (obj: unknown, depth = 0): Record<string, unknown>[] => {
+      if (depth > 5 || !obj || typeof obj !== "object") return [];
+      if (Array.isArray(obj)) {
+        // Check if this looks like a car array
+        if (obj.length > 0 && obj[0] && typeof obj[0] === "object" && "brand" in (obj[0] as Record<string, unknown>)) {
+          return obj as Record<string, unknown>[];
+        }
       }
+      for (const val of Object.values(obj as Record<string, unknown>)) {
+        const result = findArrays(val, depth + 1);
+        if (result.length > 0) return result;
+      }
+      return [];
+    };
 
-      // Extract year, km, fuel, power from text
-      const textContent = block.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    listings = findArrays(pageProps);
+    if (listings.length === 0) listings = findArrays(nextData);
 
-      const yearMatch = textContent.match(/(\d{4})/);
-      const year = yearMatch ? parseInt(yearMatch[1]) : 0;
-      if (year < 1900 || year > 2030) continue;
+    const fuelMap: Record<string, string> = {
+      "benzín": "petrol", "benzin": "petrol",
+      "nafta": "diesel", "diesel": "diesel",
+      "elektro": "electric", "elektrický": "electric",
+      "hybrid": "hybrid", "plug-in hybrid": "hybrid", "plug-in": "hybrid",
+    };
 
-      const kmMatch = textContent.match(/([\d\s,.]+)\s*km/i);
-      const mileage = kmMatch
-        ? parseInt(kmMatch[1].replace(/[\s,.]/g, ""))
-        : 0;
+    const bodyMap: Record<string, string> = {
+      "hatchback": "hatchback", "sedan": "sedan", "limuzína": "sedan",
+      "combi": "kombi", "kombi": "kombi", "suv": "SUV",
+      "pick-up": "SUV", "kabriolet": "kabriolet", "kupé": "sedan",
+      "mpv": "van", "van": "van", "minibus": "minibus",
+    };
 
-      const kwMatch = textContent.match(/(\d+)\s*kW/i);
-      const powerKw = kwMatch ? parseInt(kwMatch[1]) : 0;
+    for (const item of listings) {
+      const brand = String(item.brand || "");
+      const model = String(item.carModel || item.model || "");
+      if (!brand) continue;
 
-      // Determine fuel type
-      const fuelMap: Record<string, string> = {
-        benzín: "petrol", benzin: "petrol",
-        nafta: "diesel", diesel: "diesel",
-        elektro: "electric", electric: "electric",
-        hybrid: "hybrid", "plug-in": "hybrid",
-      };
-      let fuel = "petrol";
-      for (const [key, val] of Object.entries(fuelMap)) {
-        if (textContent.toLowerCase().includes(key)) {
-          fuel = val;
-          break;
+      const fuel = fuelMap[(String(item.fuel || "benzín")).toLowerCase()] || "petrol";
+      const gearbox = String(item.gearbox || "");
+      const isAutomatic = /automat|dsg|tiptronic|s.tronic/i.test(gearbox);
+      const bodyType = bodyMap[(String(item.bodyworkValue || item.bodywork || "")).toLowerCase()] || "sedan";
+
+      // Extract images
+      const images: string[] = [];
+      if (item.images && Array.isArray(item.images)) {
+        for (const img of item.images as Record<string, unknown>[]) {
+          const imgId = String(img.id || "");
+          if (imgId) {
+            // Use img.autobazar.eu CDN with larger size
+            images.push(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${imgId}`);
+          }
+        }
+      }
+      if (item.image && typeof item.image === "object") {
+        const mainImg = item.image as Record<string, unknown>;
+        const mainId = String(mainImg.id || "");
+        if (mainId && !images.some(u => u.includes(mainId))) {
+          images.unshift(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${mainId}`);
         }
       }
 
-      // Determine transmission
-      const isAutomatic = /A\/T|DSG|automat|tiptronic|S tronic|A[67]/i.test(textContent);
-      const transmission = isAutomatic ? "automatic" : "manual";
+      cars.push({
+        abId: String(item.id || ""),
+        brand,
+        model,
+        year: Number(item.yearValue || item.year || 0),
+        price: Number(item.finalPrice || item.price || 0),
+        mileage: Number(item.mileage || 0),
+        fuel,
+        transmission: isAutomatic ? "automatic" : "manual",
+        powerKw: Number(item.enginePower || 0),
+        engineCapacity: Number(item.engineCapacity || 0),
+        color: String(item.color || item.colorValue || ""),
+        bodyType,
+        images: images.slice(0, 10),
+      });
+    }
+  } catch {
+    // JSON parsing failed
+  }
 
-      // Parse brand and model from title
+  return cars;
+}
+
+function parseHtmlFallback(html: string): ParsedCar[] {
+  // Simple fallback if __NEXT_DATA__ is not available
+  const cars: ParsedCar[] = [];
+  const detailLinks = html.match(/href="\/detail\/[^"]+"/g) || [];
+
+  for (const link of detailLinks) {
+    const href = link.replace('href="', '').replace('"', '');
+    const idMatch = href.match(/\/([A-Za-z0-9]+)\/$/);
+    if (!idMatch) continue;
+
+    // Extract title from nearby text
+    const titleMatch = html.match(new RegExp(`<h3[^>]*>([^<]+)</h3>[\\s\\S]{0,500}${idMatch[1]}`));
+    const priceMatch = html.match(new RegExp(`(\\d[\\d\\s]+)\\s*€[\\s\\S]{0,500}${idMatch[1]}`));
+
+    if (titleMatch) {
+      const title = titleMatch[1].trim();
       const brandModel = parseBrandModel(title);
 
-      // Determine body type from keywords
-      const bodyType = detectBodyType(textContent, title);
-
       cars.push({
-        abId,
+        abId: idMatch[1],
         brand: brandModel.brand,
         model: brandModel.model,
-        year,
-        price,
-        mileage,
-        fuel,
-        transmission,
-        powerKw: powerKw,
+        year: 0,
+        price: priceMatch ? parseInt(priceMatch[1].replace(/\s/g, "")) : 0,
+        mileage: 0,
+        fuel: "petrol",
+        transmission: "manual",
+        powerKw: 0,
+        engineCapacity: 0,
         color: "",
-        bodyType,
-        images,
+        bodyType: "sedan",
+        images: [],
       });
-    } catch {
-      continue;
     }
   }
 
@@ -258,80 +298,20 @@ function parseListingPage(html: string): ScrapedCar[] {
 
 function parseBrandModel(title: string): { brand: string; model: string } {
   const knownBrands = [
-    "Volkswagen", "Škoda", "Audi", "BMW", "Mercedes-Benz", "Mercedes",
+    "Volkswagen", "Škoda", "Audi", "BMW", "Mercedes-Benz",
     "Tesla", "Porsche", "Volvo", "Toyota", "Hyundai", "Kia", "Ford",
     "Opel", "Peugeot", "Fiat", "Seat", "Cupra", "Honda", "Yamaha",
-    "Mitsubishi", "DAF", "Kogel", "Citroën", "Renault", "Suzuki",
-    "Mazda", "Nissan", "Land Rover", "Jaguar", "Mini", "Dacia",
+    "Mitsubishi", "DAF", "Kogel", "Citroën", "Renault",
   ];
 
   for (const brand of knownBrands) {
     if (title.toLowerCase().startsWith(brand.toLowerCase())) {
-      return {
-        brand,
-        model: title.substring(brand.length).trim(),
-      };
+      return { brand, model: title.substring(brand.length).trim() };
     }
   }
 
-  // Fallback: first word is brand
   const parts = title.split(" ");
-  return {
-    brand: parts[0],
-    model: parts.slice(1).join(" "),
-  };
-}
-
-function detectBodyType(text: string, title: string): string {
-  const combined = (text + " " + title).toLowerCase();
-  if (/suv|crossover|q[2358]|tiguan|tucson|karoq|kodiaq|kamiq|t-cross|cayenne|gle|glc|gla|xc40|rav4|formentor|arona/i.test(combined)) return "SUV";
-  if (/combi|variant|touring|avant|allspace/i.test(combined)) return "kombi";
-  if (/sedan|limousine|a[3468]|rad [357]|model 3|e trieda|passat(?! variant)/i.test(combined)) return "sedan";
-  if (/hatchback|golf(?! variant)|polo|rad 1|i3|id\.3|500(?!.*c )/i.test(combined)) return "hatchback";
-  if (/cabrio|kabriol|500 c/i.test(combined)) return "kabriolet";
-  if (/van|transporter|caravelle|multivan|vivaro|rifter/i.test(combined)) return "van";
-  if (/skúter|scooter|pcx|x-max/i.test(combined)) return "skúter";
-  if (/náves|trailer|kogel/i.test(combined)) return "náves";
-  if (/nákladné|truck|lf45|daf/i.test(combined)) return "nákladné";
-  if (/disk|pneumat|r1[789]|r20|5x112/i.test(combined)) return "disky";
-  return "sedan";
-}
-
-async function fetchCarPhotos(abId: string): Promise<string[]> {
-  try {
-    const res = await fetch(
-      `https://www.autobazar.eu/wb/zolino2/card_white.php?id=${abId}`,
-      { headers: { "User-Agent": "KCars-Sync/1.0" } }
-    );
-    if (!res.ok) return [];
-    const html = await res.text();
-
-    // Extract folder from thumbs URLs
-    const folderMatch = html.match(/\/thumbs\/(\d+)\//);
-    if (!folderMatch) return [];
-    const folder = folderMatch[1];
-
-    // Count photos by finding all thumb image references
-    const thumbMatches = html.match(new RegExp(`${abId}_\\d+\\.jpg`, "g")) || [];
-    const uniqueNums = new Set<number>();
-    for (const m of thumbMatches) {
-      const numMatch = m.match(/_(\d+)\.jpg/);
-      if (numMatch) uniqueNums.add(parseInt(numMatch[1]));
-    }
-    // Also check for _big.jpg (= photo 1)
-    if (html.includes(`${abId}_big.jpg`)) uniqueNums.add(1);
-
-    const maxPhoto = Math.max(...uniqueNums, 1);
-    // Use full-size /pics/ URLs, limit to first 10 for performance
-    const limit = Math.min(maxPhoto, 10);
-    const photos: string[] = [];
-    for (let i = 1; i <= limit; i++) {
-      photos.push(`https://www.autobazar.eu/pics/${folder}/${abId}_${i}.jpg`);
-    }
-    return photos;
-  } catch {
-    return [];
-  }
+  return { brand: parts[0], model: parts.slice(1).join(" ") };
 }
 
 function generateSlug(brand: string, model: string, year: number): string {
