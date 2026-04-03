@@ -223,22 +223,57 @@ function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[]
       const isAutomatic = /automat|dsg|tiptronic|s.tronic/i.test(gearbox);
       const bodyType = bodyMap[(String(item.bodyworkValue || item.bodywork || "")).toLowerCase()] || "sedan";
 
-      // Extract images
+      // Extract images — use /pics/ URL with remoteId (works without hotlink protection)
+      const remoteId = String(item.remoteId || item.externalId || "");
       const images: string[] = [];
-      if (item.images && Array.isArray(item.images)) {
-        for (const img of item.images as Record<string, unknown>[]) {
-          const imgId = String(img.id || "");
-          if (imgId) {
-            // Use img.autobazar.eu CDN with larger size
-            images.push(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${imgId}`);
+
+      if (remoteId) {
+        // Fetch folder number from card_white page
+        try {
+          const cardRes = await fetch(
+            `https://www.autobazar.eu/wb/zolino2/card_white.php?id=${remoteId}`,
+            { headers: { "User-Agent": "Mozilla/5.0 (compatible; KCars/1.0)" } }
+          );
+          if (cardRes.ok) {
+            const cardHtml = await cardRes.text();
+            const folderMatch = cardHtml.match(/\/thumbs\/(\d+)\//);
+            if (folderMatch) {
+              const folder = folderMatch[1];
+              // Count photos
+              const photoNums = new Set<number>();
+              const matches = cardHtml.match(new RegExp(`${remoteId}_(\\d+)\\.jpg`, "g")) || [];
+              for (const m of matches) {
+                const n = m.match(/_(\d+)\.jpg/);
+                if (n) photoNums.add(parseInt(n[1]));
+              }
+              if (cardHtml.includes(`${remoteId}_big.jpg`)) photoNums.add(1);
+              const maxN = Math.min(Math.max(...photoNums, 1), 10);
+              for (let i = 1; i <= maxN; i++) {
+                images.push(`https://www.autobazar.eu/pics/${folder}/${remoteId}_${i}.jpg`);
+              }
+            }
           }
+        } catch {
+          // Fallback to CDN URL
         }
       }
-      if (item.image && typeof item.image === "object") {
-        const mainImg = item.image as Record<string, unknown>;
-        const mainId = String(mainImg.id || "");
-        if (mainId && !images.some(u => u.includes(mainId))) {
-          images.unshift(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${mainId}`);
+
+      // Fallback: use CDN URLs if /pics/ failed
+      if (images.length === 0) {
+        if (item.images && Array.isArray(item.images)) {
+          for (const img of (item.images as Record<string, unknown>[]).slice(0, 5)) {
+            const imgId = String(img.id || "");
+            if (imgId) {
+              images.push(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${imgId}`);
+            }
+          }
+        }
+        if (item.image && typeof item.image === "object") {
+          const mainImg = item.image as Record<string, unknown>;
+          const mainId = String(mainImg.id || "");
+          if (mainId && !images.some(u => u.includes(mainId))) {
+            images.unshift(`https://img.autobazar.eu/foto/OTAweDY3NS9maWx0ZXJzOnF1YWxpdHkoODUpOmZvcm1hdCh3ZWJwKS9hc2s=/${mainId}`);
+          }
         }
       }
 
