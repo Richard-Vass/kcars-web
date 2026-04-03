@@ -174,10 +174,10 @@ function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[]
 
     // Try common Next.js data paths
     const findArrays = (obj: unknown, depth = 0): Record<string, unknown>[] => {
-      if (depth > 5 || !obj || typeof obj !== "object") return [];
+      if (depth > 8 || !obj || typeof obj !== "object") return [];
       if (Array.isArray(obj)) {
-        // Check if this looks like a car array
-        if (obj.length > 0 && obj[0] && typeof obj[0] === "object" && "brand" in (obj[0] as Record<string, unknown>)) {
+        // Check if this looks like a car array — must have brandValue (text, not number)
+        if (obj.length > 0 && obj[0] && typeof obj[0] === "object" && "brandValue" in (obj[0] as Record<string, unknown>)) {
           return obj as Record<string, unknown>[];
         }
       }
