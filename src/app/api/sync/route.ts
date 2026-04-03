@@ -62,8 +62,14 @@ export async function GET(request: NextRequest) {
 
       const ex = existingMap.get(car.abId);
 
+      // Fetch all photos from detail page
+      const allPhotos = await fetchCarPhotos(car.abId);
+      if (allPhotos.length > 0) {
+        car.images = allPhotos;
+      }
+
       if (ex) {
-        // Update if price or mileage changed
+        // Update price, mileage, or photos
         if (ex.price !== car.price || ex.mileage !== car.mileage) {
           await supabase
             .from("cars")
@@ -289,6 +295,43 @@ function detectBodyType(text: string, title: string): string {
   if (/nákladné|truck|lf45|daf/i.test(combined)) return "nákladné";
   if (/disk|pneumat|r1[789]|r20|5x112/i.test(combined)) return "disky";
   return "sedan";
+}
+
+async function fetchCarPhotos(abId: string): Promise<string[]> {
+  try {
+    const res = await fetch(
+      `https://www.autobazar.eu/wb/zolino2/card_white.php?id=${abId}`,
+      { headers: { "User-Agent": "KCars-Sync/1.0" } }
+    );
+    if (!res.ok) return [];
+    const html = await res.text();
+
+    // Extract folder from thumbs URLs
+    const folderMatch = html.match(/\/thumbs\/(\d+)\//);
+    if (!folderMatch) return [];
+    const folder = folderMatch[1];
+
+    // Count photos by finding all thumb image references
+    const thumbMatches = html.match(new RegExp(`${abId}_\\d+\\.jpg`, "g")) || [];
+    const uniqueNums = new Set<number>();
+    for (const m of thumbMatches) {
+      const numMatch = m.match(/_(\d+)\.jpg/);
+      if (numMatch) uniqueNums.add(parseInt(numMatch[1]));
+    }
+    // Also check for _big.jpg (= photo 1)
+    if (html.includes(`${abId}_big.jpg`)) uniqueNums.add(1);
+
+    const maxPhoto = Math.max(...uniqueNums, 1);
+    // Use full-size /pics/ URLs, limit to first 10 for performance
+    const limit = Math.min(maxPhoto, 10);
+    const photos: string[] = [];
+    for (let i = 1; i <= limit; i++) {
+      photos.push(`https://www.autobazar.eu/pics/${folder}/${abId}_${i}.jpg`);
+    }
+    return photos;
+  } catch {
+    return [];
+  }
 }
 
 function generateSlug(brand: string, model: string, year: number): string {
