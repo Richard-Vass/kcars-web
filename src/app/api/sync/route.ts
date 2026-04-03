@@ -206,12 +206,20 @@ function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[]
     };
 
     for (const item of listings) {
-      const brand = String(item.brand || "");
-      const model = String(item.carModel || item.model || "");
-      if (!brand) continue;
+      const brand = String(item.brandValue || item.brand || "");
+      const model = String(item.carModelValue || item.carModel || item.model || "");
+      const title = String(item.title || "");
+      if (!brand || /^\d+$/.test(brand)) {
+        // If brand is still numeric, try to extract from title
+        if (!title) continue;
+        const parsed = parseBrandModel(title);
+        if (!parsed.brand) continue;
+      }
+      const finalBrand = /^\d+$/.test(brand) ? parseBrandModel(title).brand : brand;
+      const finalModel = /^\d+$/.test(model) ? (title ? title.replace(finalBrand, "").trim() : model) : model;
 
-      const fuel = fuelMap[(String(item.fuel || "benzín")).toLowerCase()] || "petrol";
-      const gearbox = String(item.gearbox || "");
+      const fuel = fuelMap[(String(item.fuelValue || item.fuel || "benzín")).toLowerCase()] || "petrol";
+      const gearbox = String(item.gearboxValue || item.gearbox || "");
       const isAutomatic = /automat|dsg|tiptronic|s.tronic/i.test(gearbox);
       const bodyType = bodyMap[(String(item.bodyworkValue || item.bodywork || "")).toLowerCase()] || "sedan";
 
@@ -236,8 +244,8 @@ function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[]
 
       cars.push({
         abId: String(item.id || ""),
-        brand,
-        model,
+        brand: finalBrand,
+        model: finalModel,
         year: Number(item.yearValue || item.year || 0),
         price: Number(item.finalPrice || item.price || 0),
         mileage: Number(item.mileage || 0),
@@ -245,7 +253,7 @@ function extractCarsFromNextData(nextData: Record<string, unknown>): ParsedCar[]
         transmission: isAutomatic ? "automatic" : "manual",
         powerKw: Number(item.enginePower || 0),
         engineCapacity: Number(item.engineCapacity || 0),
-        color: String(item.color || item.colorValue || ""),
+        color: String(item.colorValue || item.color || ""),
         bodyType,
         images: images.slice(0, 10),
       });
