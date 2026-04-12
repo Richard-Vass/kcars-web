@@ -81,11 +81,32 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={`${inter.variable} ${outfit.variable} h-full antialiased`}>
       <head>
-        {/* Hreflang tags */}
         {alternateLinks.map((link) => (
           <link key={link.hrefLang} rel="alternate" hrefLang={link.hrefLang} href={link.href} />
         ))}
         <link rel="alternate" hrefLang="x-default" href="https://kcars.sk/sk" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AutoDealer",
+            name: "K cars s.r.o.",
+            legalName: "K cars s.r.o.",
+            url: "https://kcars.sk",
+            telephone: "+421905489662",
+            email: "kcars.kcars1@gmail.com",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "Eliášovce 80",
+              postalCode: "930 38",
+              addressLocality: "Nový Život",
+              addressCountry: "SK",
+            },
+            geo: { "@type": "GeoCoordinates", latitude: 47.9862, longitude: 17.5644 },
+            areaServed: { "@type": "Country", name: "Slovakia" },
+            priceRange: "€€",
+          }) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-[#060a12] text-[#f0f2f5] font-sans">
         <Navbar locale={locale as Locale} t={t} />
