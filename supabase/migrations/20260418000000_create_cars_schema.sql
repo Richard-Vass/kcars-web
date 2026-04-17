@@ -132,6 +132,27 @@ create trigger trg_reservations_updated_at
   for each row execute function public.set_updated_at();
 
 -- ============================================
+-- newsletter_subscribers — e-mail newsletter
+-- ============================================
+create table if not exists public.newsletter_subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  locale text default 'sk',
+  source text default 'website',
+  unsubscribed boolean default false,
+  unsubscribed_at timestamptz,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_newsletter_active on public.newsletter_subscribers(email) where unsubscribed = false;
+
+alter table public.newsletter_subscribers enable row level security;
+-- Public insert (no PII required)
+drop policy if exists "public_insert_newsletter" on public.newsletter_subscribers;
+create policy "public_insert_newsletter" on public.newsletter_subscribers
+  for insert with check (email is not null);
+
+-- ============================================
 -- contact_messages — všeobecné kontaktné správy
 -- ============================================
 create table if not exists public.contact_messages (
