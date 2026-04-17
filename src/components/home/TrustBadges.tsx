@@ -1,5 +1,4 @@
 import { Locale } from "@/lib/i18n";
-import { ShieldCheck, Banknote, Wrench, Clock, Car as CarIcon, Phone } from "lucide-react";
 
 interface Badge {
   icon: React.ReactNode;
@@ -7,9 +6,31 @@ interface Badge {
   desc: Record<string, string>;
 }
 
+// inline SVG ikony — jednoduchý stroke style, kompatibilné s celym UI
+const IconWrap = ({ children }: { children: React.ReactNode }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-7 h-7"
+    aria-hidden="true"
+  >
+    {children}
+  </svg>
+);
+
 const badges: Badge[] = [
   {
-    icon: <ShieldCheck className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <path d="M9 12l2 2 4-4" />
+      </IconWrap>
+    ),
     title: {
       sk: "Overená história",
       cs: "Ověřená historie",
@@ -26,7 +47,13 @@ const badges: Badge[] = [
     },
   },
   {
-    icon: <Banknote className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <rect x="2" y="6" width="20" height="12" rx="2" />
+        <circle cx="12" cy="12" r="2" />
+        <path d="M6 12h.01M18 12h.01" />
+      </IconWrap>
+    ),
     title: {
       sk: "Financovanie od 0 %",
       cs: "Financování od 0 %",
@@ -43,7 +70,11 @@ const badges: Badge[] = [
     },
   },
   {
-    icon: <Wrench className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+      </IconWrap>
+    ),
     title: {
       sk: "Technická kontrola",
       cs: "Technická kontrola",
@@ -60,7 +91,12 @@ const badges: Badge[] = [
     },
   },
   {
-    icon: <Clock className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </IconWrap>
+    ),
     title: {
       sk: "Rezervácia do 24h",
       cs: "Rezervace do 24h",
@@ -77,7 +113,13 @@ const badges: Badge[] = [
     },
   },
   {
-    icon: <CarIcon className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <path d="M14 16H9m10 0h3v-3.15a1 1 0 00-.84-.99L16 11l-2.7-3.6a1 1 0 00-.8-.4H5.24a2 2 0 00-1.8 1.1l-.8 1.63A6 6 0 002 12.42V16h2" />
+        <circle cx="6.5" cy="16.5" r="2.5" />
+        <circle cx="16.5" cy="16.5" r="2.5" />
+      </IconWrap>
+    ),
     title: {
       sk: "Výkup vozidiel",
       cs: "Výkup vozidel",
@@ -94,7 +136,11 @@ const badges: Badge[] = [
     },
   },
   {
-    icon: <Phone className="w-7 h-7" />,
+    icon: (
+      <IconWrap>
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+      </IconWrap>
+    ),
     title: {
       sk: "Osobná konzultácia",
       cs: "Osobní konzultace",
