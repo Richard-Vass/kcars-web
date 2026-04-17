@@ -18,6 +18,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </a>
               <a href="/admin" className="text-sm text-[#6b7a94] hover:text-white transition-colors">Vozidlá</a>
               <a href="/admin/pridat" className="text-sm text-[#6b7a94] hover:text-white transition-colors">+ Pridať</a>
+              <a href="/admin/rezervacie" className="text-sm text-[#6b7a94] hover:text-white transition-colors">Rezervácie</a>
+              <a href="/admin/dashboard" className="text-sm text-[#6b7a94] hover:text-white transition-colors">Dashboard</a>
             </div>
             <a href="/sk" className="text-sm text-[#6b7a94] hover:text-white transition-colors">← Web</a>
           </div>
