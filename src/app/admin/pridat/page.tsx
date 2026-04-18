@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 
 const inputClass = "w-full bg-[#060a12] border border-white/5 rounded-xl px-4 py-3 text-sm text-[#f0f2f5] placeholder:text-[#6b7a94] focus:border-[#ef4444]/50 focus:outline-none transition-colors";
 const labelClass = "text-sm text-[#94a3b8] mb-1 block";
@@ -190,7 +192,14 @@ export default function AddCarPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
             {images.map((img, i) => (
               <div key={i} className="relative aspect-[4/3] rounded-xl overflow-hidden bg-[#060a12] border border-white/5">
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                <Image
+                  src={img}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 50vw, 200px"
+                  unoptimized
+                  className="object-cover"
+                />
                 <button
                   type="button"
                   onClick={() => setImages((prev) => prev.filter((_, j) => j !== i))}
@@ -241,9 +250,9 @@ export default function AddCarPage() {
           >
             {saving ? "Ukladám..." : "Uložiť vozidlo"}
           </button>
-          <a href="/admin" className="bg-white/5 border border-white/10 text-[#94a3b8] font-medium px-8 py-3 rounded-xl hover:bg-white/10 transition-colors">
+          <Link href="/admin" className="bg-white/5 border border-white/10 text-[#94a3b8] font-medium px-8 py-3 rounded-xl hover:bg-white/10 transition-colors">
             Zrušiť
-          </a>
+          </Link>
         </div>
       </form>
     </div>

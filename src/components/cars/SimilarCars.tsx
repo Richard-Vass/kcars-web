@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Car } from "@/types";
 import { Locale } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
@@ -38,10 +39,12 @@ export default async function SimilarCars({ currentCar, locale }: SimilarCarsPro
           >
             <div className="aspect-[16/10] bg-[#0c1221] relative overflow-hidden">
               {car.images && car.images.length > 0 ? (
-                <img
+                <Image
                   src={proxyImageUrl(car.images[0])}
                   alt={`${car.brand} ${car.model}`}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               ) : (

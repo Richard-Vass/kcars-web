@@ -24,7 +24,7 @@ Pravidlá:
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, locale } = await request.json();
+    const { message } = await request.json();
 
     if (!message || typeof message !== "string") {
       return NextResponse.json({ error: "Message required" }, { status: 400 });

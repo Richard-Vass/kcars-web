@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 // VÚB Banka rate table — monthly rates derived from actual VÚB offer
 // Rate varies by term length (shorter = higher rate)
@@ -54,7 +55,6 @@ export default function LeasingPage() {
   const downPayment = Math.round(price * (downPaymentPct / 100));
   const loanAmount = price - downPayment;
   const monthlyRate = getMonthlyRate(months, selectedRate);
-  const annualRate = monthlyRate * 12;
 
   const monthlyPayment =
     loanAmount > 0 && monthlyRate > 0
@@ -287,12 +287,12 @@ export default function LeasingPage() {
                 ))}
               </div>
 
-              <a
+              <Link
                 href="/sk/kontakt"
                 className="mt-6 w-full bg-gradient-to-r from-[#ef4444] to-[#f97316] text-white font-semibold py-3 rounded-xl text-center block hover:-translate-y-0.5 transition-all shadow-[0_4px_20px_rgba(239,68,68,0.25)]"
               >
                 Chcem financovanie
-              </a>
+              </Link>
 
               <p className="text-xs text-[#8b9bb4] mt-4 text-center">
                 * Orientačný výpočet. Skutočné podmienky závisia od bonity klienta.
@@ -437,12 +437,12 @@ export default function LeasingPage() {
             Máte otázky ohľadom financovania? Radi vám poradíme.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a
+            <Link
               href="/sk/kontakt"
               className="bg-gradient-to-r from-[#ef4444] to-[#f97316] text-white font-semibold px-8 py-4 rounded-[20px] shadow-[0_4px_24px_rgba(239,68,68,0.3)] hover:-translate-y-1 transition-all"
             >
               Kontaktujte nás
-            </a>
+            </Link>
             <a
               href="https://wa.me/421905489662?text=Dobrý%20deň,%20mám%20záujem%20o%20financovanie%20vozidla."
               target="_blank"

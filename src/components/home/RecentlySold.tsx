@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { supabase } from "@/lib/supabase";
 import { Car } from "@/types";
 import { Locale } from "@/lib/i18n";
@@ -35,10 +36,12 @@ export default async function RecentlySold({ locale }: RecentlySoldProps) {
             <div key={car.id} className="bg-[#0c1221] rounded-xl overflow-hidden border border-white/5 opacity-60">
               <div className="aspect-[16/10] bg-[#111a2e] relative overflow-hidden">
                 {car.images && car.images.length > 0 ? (
-                  <img
+                  <Image
                     src={proxyImageUrl(car.images[0])}
                     alt={`${car.brand} ${car.model}`}
-                    className="absolute inset-0 w-full h-full object-cover grayscale"
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover grayscale"
                     loading="lazy"
                   />
                 ) : (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { proxyImageUrl } from "@/lib/utils";
 
 interface CarGalleryProps {
@@ -25,10 +26,13 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
     <div>
       {/* Main image */}
       <div className="aspect-[16/10] bg-[#0c1221] rounded-2xl relative overflow-hidden">
-        <img
+        <Image
           src={proxyImageUrl(images[activeIndex])}
           alt={`${alt} - ${activeIndex + 1}`}
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          sizes="(max-width: 1024px) 100vw, 66vw"
+          priority={activeIndex === 0}
+          className="object-cover"
         />
         {/* Navigation arrows */}
         {images.length > 1 && (
@@ -68,7 +72,14 @@ export default function CarGallery({ images, alt }: CarGalleryProps) {
                 i === activeIndex ? "border-[#ef4444]" : "border-transparent opacity-60 hover:opacity-100"
               }`}
             >
-              <img src={proxyImageUrl(img)} alt={`${alt} thumb ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+              <Image
+                src={proxyImageUrl(img)}
+                alt={`${alt} thumb ${i + 1}`}
+                fill
+                sizes="80px"
+                className="object-cover"
+                loading="lazy"
+              />
             </button>
           ))}
         </div>

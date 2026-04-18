@@ -8,12 +8,14 @@
  *  - CompareTable (zobrazi vybrane auta vedla seba)
  */
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback, useSyncExternalStore } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Car } from "@/types";
 import type { Locale } from "@/lib/i18n";
 
 const STORAGE_KEY = "kcars_compare";
+const COMPARE_EVENT = "kcars:compare-change";
 const MAX_COMPARE = 3;
 
 const COPY = {
@@ -112,27 +114,37 @@ function readCompare(): string[] {
 function writeCompare(ids: string[]) {
   try {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(ids.slice(0, MAX_COMPARE)));
-    window.dispatchEvent(new CustomEvent("kcars:compare-change"));
+    window.dispatchEvent(new CustomEvent(COMPARE_EVENT));
   } catch {
     // ignore
   }
 }
 
-export function useCompareIds() {
-  const [ids, setIds] = useState<string[]>([]);
+function subscribeCompare(cb: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(COMPARE_EVENT, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(COMPARE_EVENT, cb);
+    window.removeEventListener("storage", cb);
+  };
+}
 
-  useEffect(() => {
-    setIds(readCompare());
-    function onChange() {
-      setIds(readCompare());
-    }
-    window.addEventListener("kcars:compare-change", onChange);
-    window.addEventListener("storage", onChange);
-    return () => {
-      window.removeEventListener("kcars:compare-change", onChange);
-      window.removeEventListener("storage", onChange);
-    };
-  }, []);
+function getCompareSnapshot(): string {
+  return readCompare().join(",");
+}
+
+function getServerCompareSnapshot(): string {
+  return "";
+}
+
+export function useCompareIds() {
+  const snapshot = useSyncExternalStore(
+    subscribeCompare,
+    getCompareSnapshot,
+    getServerCompareSnapshot
+  );
+  const ids = snapshot ? snapshot.split(",").filter(Boolean) : [];
 
   const toggle = useCallback((id: string) => {
     const current = readCompare();
@@ -263,12 +275,13 @@ export function CompareFloatingBar({
                       <th key={c.id} className="text-left py-2 pr-4 align-top">
                         <div className="bg-[#111a2e] rounded-xl p-4">
                           {c.images?.[0] ? (
-                            <div className="aspect-[16/10] mb-2 rounded-lg overflow-hidden bg-[#0c1221]">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
+                            <div className="aspect-[16/10] mb-2 rounded-lg overflow-hidden bg-[#0c1221] relative">
+                              <Image
                                 src={c.images[0]}
                                 alt={`${c.brand} ${c.model}`}
-                                className="w-full h-full object-cover"
+                                fill
+                                sizes="(max-width: 768px) 50vw, 200px"
+                                className="object-cover"
                               />
                             </div>
                           ) : null}

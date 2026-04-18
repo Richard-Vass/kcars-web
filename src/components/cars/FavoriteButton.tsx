@@ -1,30 +1,57 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 
 interface FavoriteButtonProps {
   carId: string;
   className?: string;
 }
 
-export default function FavoriteButton({ carId, className = "" }: FavoriteButtonProps) {
-  const [isFav, setIsFav] = useState(false);
+const FAV_KEY = "kcars-favorites";
+const FAV_EVENT = "kcars:favorites-change";
 
-  useEffect(() => {
-    const favs = JSON.parse(localStorage.getItem("kcars-favorites") || "[]");
-    setIsFav(favs.includes(carId));
-  }, [carId]);
+function readFavs(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(window.localStorage.getItem(FAV_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function subscribe(cb: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(FAV_EVENT, cb);
+  window.addEventListener("storage", cb);
+  return () => {
+    window.removeEventListener(FAV_EVENT, cb);
+    window.removeEventListener("storage", cb);
+  };
+}
+
+function getSnapshot(): string {
+  return readFavs().join(",");
+}
+
+function getServerSnapshot(): string {
+  return "";
+}
+
+export default function FavoriteButton({ carId, className = "" }: FavoriteButtonProps) {
+  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const isFav = snapshot.split(",").filter(Boolean).includes(carId);
 
   function toggle() {
-    const favs = JSON.parse(localStorage.getItem("kcars-favorites") || "[]");
-    let newFavs;
-    if (favs.includes(carId)) {
-      newFavs = favs.filter((id: string) => id !== carId);
-    } else {
-      newFavs = [...favs, carId];
+    const favs = readFavs();
+    const newFavs = favs.includes(carId)
+      ? favs.filter((id: string) => id !== carId)
+      : [...favs, carId];
+    try {
+      window.localStorage.setItem(FAV_KEY, JSON.stringify(newFavs));
+      window.dispatchEvent(new CustomEvent(FAV_EVENT));
+    } catch {
+      // ignore storage failures (private mode, etc.)
     }
-    localStorage.setItem("kcars-favorites", JSON.stringify(newFavs));
-    setIsFav(!isFav);
   }
 
   return (

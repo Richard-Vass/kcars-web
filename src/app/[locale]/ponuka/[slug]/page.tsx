@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Locale, getTranslations } from "@/lib/i18n";
 import { supabase } from "@/lib/supabase";
 import { Car } from "@/types";
-import { proxyImageUrl } from "@/lib/utils";
 import CarGallery from "@/components/cars/CarGallery";
 import PaymentCalculator from "@/components/cars/PaymentCalculator";
 import ReservationForm from "@/components/forms/ReservationForm";
